@@ -52,6 +52,18 @@
 
     .hidden { display: none !important; }
 
+    /* وضع الكمبيوتر */
+    body.desktop-mode-active {
+      display: flex; flex-direction: row; overflow: hidden;
+    }
+    body.desktop-mode-active #chat-screen { flex: 1; position: relative; border-left: 1px solid var(--border-color); }
+    body.desktop-mode-active #sidebar {
+      position: relative; right: 0; width: 340px; transition: none; border-left: none; 
+      display: flex !important; z-index: 100;
+    }
+    body.desktop-mode-active #close-sidebar-btn { display: none; }
+    body.desktop-mode-active #open-sidebar-btn { cursor: default; }
+
     /* علامة التوثيق */
     .verified-badge {
       display: inline-flex; align-items: center; justify-content: center;
@@ -109,7 +121,7 @@
     .card-box {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 20px; padding: 25px; width: 90%; max-width: 400px;
+      border-radius: 20px; padding: 25px; width: 100%; max-width: 400px;
       box-shadow: 0 15px 35px var(--shadow-color);
       display: flex; flex-direction: column; gap: 12px; text-align: center;
     }
@@ -144,29 +156,10 @@
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     }
 
-    .primary-btn:disabled {
-      opacity: 0.5; cursor: not-allowed;
-    }
+    .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* الهيكل الرئيسي وتجاوب الكمبيوتر والهاتف */
-    .app-layout { 
-      display: flex; 
-      flex-direction: column; 
-      width: 100vw; 
-      height: 100vh; 
-    }
-
-    @media (min-width: 768px) {
-      .app-layout {
-        max-width: 1000px;
-        height: 92vh;
-        margin: 4vh auto;
-        border-radius: 20px;
-        border: 1px solid var(--border-color);
-        box-shadow: 0 20px 50px var(--shadow-color);
-        overflow: hidden;
-      }
-    }
+    /* الهيكل الرئيسي */
+    .app-layout { display: flex; flex-direction: column; width: 100vw; height: 100vh; }
 
     .top-bar {
       height: 60px; background: var(--bg-card);
@@ -184,8 +177,8 @@
 
     .icon-btn {
       background: var(--bg-main); color: var(--text-primary);
-      border: 1px solid var(--border-color); padding: 8px 12px;
-      border-radius: 10px; cursor: pointer; font-size: 12px;
+      border: 1px solid var(--border-color); padding: 8px 14px;
+      border-radius: 10px; cursor: pointer; font-size: 13px;
       display: flex; align-items: center; gap: 6px; font-weight: 600;
     }
 
@@ -220,7 +213,16 @@
       background: var(--bg-msg-mine); color: var(--text-msg-mine); border: none;
     }
 
-    /* بطاقة تطبيق/لعبة HTML */
+    /* مربع الرد الداخلي */
+    .reply-quote-box {
+      background: rgba(150, 150, 150, 0.15); border-right: 3px solid var(--accent-color);
+      padding: 6px 10px; border-radius: 6px; margin-bottom: 8px; font-size: 12px; cursor: pointer;
+    }
+    .message-item.mine .reply-quote-box {
+      background: rgba(255, 255, 255, 0.2); border-right-color: #ffffff;
+    }
+
+    /* بطاقة تطبيق HTML */
     .html-app-card {
       background: linear-gradient(135deg, #1e1b4b, #312e81);
       color: #fff; padding: 12px 16px; border-radius: 12px;
@@ -244,8 +246,18 @@
       display: flex; align-items: center; gap: 8px;
     }
 
+    .form-container-wrapper {
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    .action-preview-box {
+      background: var(--bg-card); padding: 8px 12px; border-radius: 12px 12px 0 0;
+      border: 1px solid var(--border-color); border-bottom: none;
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: -10px; z-index: 1;
+    }
+
     .bottom-input-bar {
-      display: flex; gap: 8px; background: var(--bg-card);
+      display: flex; gap: 8px; background: var(--bg-card); position: relative; z-index: 2;
       padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border-color); align-items: center;
     }
 
@@ -257,7 +269,7 @@
 
     .nav-tab {
       display: flex; flex-direction: column; align-items: center; gap: 3px;
-      background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 12px; font-weight: 600; width: 20%;
+      background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 11px; font-weight: 600; width: 20%;
     }
     .nav-tab.active { color: var(--accent-color); font-weight: bold; }
 
@@ -276,12 +288,12 @@
     .center-modal {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
       background: var(--bg-card); border: 1px solid var(--border-color);
-      border-radius: 20px; padding: 20px; width: 92%; max-width: 420px;
+      border-radius: 20px; padding: 20px; width: 92%; max-width: 440px;
       z-index: 2500; text-align: center; display: flex; flex-direction: column; gap: 12px;
       box-shadow: 0 10px 30px var(--shadow-color);
     }
 
-    /* قسم الرسم المتقدم */
+    /* قسم الرسم */
     .drawing-full-screen {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: var(--bg-main); z-index: 4000; display: flex; flex-direction: column;
@@ -313,12 +325,29 @@
       display: flex; flex-direction: column; min-width: 90px; overflow: hidden;
     }
     .msg-dropdown button {
-      background: none; border: none; padding: 10px;
+      background: none; border: none; padding: 10px; border-bottom: 1px solid var(--border-color);
       text-align: right; font-size: 12px; cursor: pointer; color: var(--text-primary); font-weight: bold;
     }
+    .msg-dropdown button:last-child { border-bottom: none; }
   </style>
 </head>
 <body>
+
+  <!-- شاشة اختيار الجهاز (تظهر أولاً) -->
+  <div id="device-selection-screen" class="full-screen-center hidden" style="z-index: 99999;">
+    <div class="card-box">
+      <h2>اختر نوع جهازك</h2>
+      <p style="font-size: 12px; color: var(--text-secondary);">لتحسين وتعديل عرض التطبيق ليناسب شاشتك</p>
+      <button id="btn-device-mobile" class="primary-btn" style="padding:14px; font-size:15px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:8px;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+        هاتف محمول
+      </button>
+      <button id="btn-device-desktop" class="primary-btn" style="padding:14px; font-size:15px; background: #1e293b;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:8px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        كمبيوتر (شاشة عريضة)
+      </button>
+    </div>
+  </div>
 
   <!-- شاشة الحظر -->
   <div id="banned-screen" class="full-screen-center hidden" style="z-index: 9999; background: #000;">
@@ -329,7 +358,7 @@
   </div>
 
   <!-- شاشة الدخول -->
-  <div id="login-screen" class="full-screen-center">
+  <div id="login-screen" class="full-screen-center hidden">
     <div class="card-box">
       <h2>استوديو فليد</h2>
       <p style="font-size: 12px; color: var(--text-secondary);">سجل دخولك أو أنشئ حسابك للانضمام</p>
@@ -349,14 +378,14 @@
   <!-- خلفية النوافذ العائمة -->
   <div id="modal-overlay" class="modal-overlay"></div>
 
-  <!-- نافذة قائمة الأعضاء والحظر -->
+  <!-- قائمة الأعضاء -->
   <div id="members-modal" class="center-modal hidden">
-    <h3>قائمة الأعضاء المتواجدين</h3>
-    <div id="members-list-container" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin: 8px 0; text-align: right;"></div>
-    <button id="close-members-modal-btn" class="icon-btn" style="justify-content:center;">إغلاق</button>
+    <h3>قائمة الأعضاء</h3>
+    <div id="members-list-container" style="display:flex; flex-direction:column; gap:8px; max-height:350px; overflow-y:auto; padding:5px;"></div>
+    <button id="close-members-btn" class="icon-btn" style="justify-content:center;">إغلاق</button>
   </div>
 
-  <!-- نافذة تحكم وقص الأفتار (Cropper Modal) -->
+  <!-- نافذة تحكم وقص الأفتار -->
   <div id="cropper-modal" class="center-modal hidden" style="z-index: 3000;">
     <h3>تعديل وتقطير الصورة الشخصية</h3>
     <div style="width: 100%; max-height: 280px; overflow: hidden; background: #000; border-radius: 10px;">
@@ -368,7 +397,7 @@
     </div>
   </div>
 
-  <!-- نافذة البحث في GIF والإرسال المحدثة -->
+  <!-- نافذة البحث في GIF -->
   <div id="gif-modal" class="center-modal hidden">
     <h3>البحث عن صور GIF</h3>
     <input type="text" id="gif-search-input" placeholder="اكتب للبحث عن GIF..." />
@@ -376,15 +405,13 @@
     <button id="close-gif-modal-btn" class="icon-btn" style="justify-content:center;">إغلاق</button>
   </div>
 
-  <!-- قسم الرسم المتكامل -->
+  <!-- قسم الرسم -->
   <div id="drawing-section" class="drawing-full-screen hidden">
     <div class="drawing-header">
       <button id="close-drawing-btn" class="icon-btn">إلغاء</button>
       <h4 style="font-weight: bold;">محرر الرسم والطبقات</h4>
       <button id="send-drawing-btn" class="primary-btn">إرسال الرسمة</button>
     </div>
-
-    <!-- شريط أدوات الرسم -->
     <div class="drawing-tools-bar">
       <input type="color" id="brush-color" value="#000000" style="width:30px; height:30px; cursor:pointer;" title="لون الفرشاة" />
       <input type="range" id="brush-size" min="1" max="40" value="5" style="width:80px;" title="حجم الفرشاة" />
@@ -395,8 +422,6 @@
       <button id="zoom-reset-btn" class="icon-btn">إعادة الضبط</button>
       <button id="clear-canvas-btn" class="icon-btn" style="color:#ef4444;">مسح الطبقة</button>
     </div>
-
-    <!-- منطقة ورقة الرسم -->
     <div class="drawing-canvas-area">
       <div id="drawing-paper" class="drawing-paper-wrapper"></div>
     </div>
@@ -404,24 +429,15 @@
 
   <!-- قسم محرر كود HTML -->
   <div id="html-editor-modal" class="center-modal hidden" style="max-width: 500px;">
-    <h3>محرر كود HTML / JS / CSS</h3>
-    <p style="font-size:11px; color:var(--text-secondary);">اكتب كود اللعبة أو التطبيق التفاعلي هنا ليتم تشغيله بالكامل بملء الشاشة عند الضغط عليه.</p>
-    <textarea id="html-code-input" rows="10" placeholder="<html>
-<head>
-  <style> body { background: #000; color: #fff; text-align: center; padding-top: 50px; font-family: sans-serif; } </style>
-</head>
-<body>
-  <h1>أهلاً بك في تطبيقي!</h1>
-  <button onclick='alert(&quot;يعمل بنجاح!&quot;)'>اضغط هنا</button>
-</body>
-</html>"></textarea>
+    <h3>محرر كود HTML</h3>
+    <textarea id="html-code-input" rows="8" placeholder="اكتب كود اللعبة أو التطبيق..."></textarea>
     <div style="display:flex; gap:10px;">
       <button id="send-html-btn" class="primary-btn" style="flex:1;">إرسال للدردشة</button>
       <button id="close-html-editor-btn" class="icon-btn" style="flex:1; justify-content:center;">إغلاق</button>
     </div>
   </div>
 
-  <!-- مشغل تطبيق HTML بملء الشاشة -->
+  <!-- مشغل تطبيق HTML -->
   <div id="html-runner-modal" class="full-screen-center hidden" style="z-index: 5000; background:#000; flex-direction:column;">
     <div style="width:100%; height:45px; background:#111; display:flex; justify-content:space-between; align-items:center; padding:0 15px; color:#fff;">
       <span>تشغيل التطبيق التفاعلي</span>
@@ -436,8 +452,6 @@
       <h3 id="sidebar-user-title">المستخدم</h3>
       <button id="close-sidebar-btn" style="background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:18px;">X</button>
     </div>
-
-    <button id="sidebar-theme-toggle-btn" class="icon-btn" style="justify-content:center; width:100%;">الوضع النهاري / الليلي</button>
 
     <img id="edit-avatar-preview" class="avatar-preview" src="" alt="Avatar" />
     <label class="file-input-btn" style="background: var(--bg-main); color: var(--text-primary); border: 1px solid var(--border-color); text-align: center;">
@@ -461,25 +475,18 @@
       </button>
     </div>
 
-    <!-- إعدادات تخصيص النيترو -->
     <div id="nitro-settings-box" class="card-box hidden" style="padding: 12px; text-align:right;">
-      <h4 style="font-size: 12px; text-align: center;">تخصيص ألوان وخلفيات التطبيق (نيترو)</h4>
-      
+      <h4 style="font-size: 12px; text-align: center;">تخصيص ألوان (نيترو)</h4>
       <label style="font-size: 11px;">اللون الأساسي:</label>
-      <input type="color" id="custom-accent-color" value="#2563eb" style="height:30px; cursor:pointer;" />
-
-      <label style="font-size: 11px;">خلفية التطبيق العامة:</label>
-      <input type="color" id="custom-bg-main-color" value="#f8fafc" style="height:30px; cursor:pointer;" />
-
-      <label style="font-size: 11px;">خلفية البطاقات والقوائم:</label>
-      <input type="color" id="custom-bg-card-color" value="#ffffff" style="height:30px; cursor:pointer;" />
-
-      <label style="font-size: 11px;">لون النصوص الأساسي:</label>
-      <input type="color" id="custom-text-color" value="#0f172a" style="height:30px; cursor:pointer;" />
-
+      <input type="color" id="custom-accent-color" value="#2563eb" style="height:30px;" />
+      <label style="font-size: 11px;">خلفية التطبيق:</label>
+      <input type="color" id="custom-bg-main-color" value="#f8fafc" style="height:30px;" />
+      <label style="font-size: 11px;">خلفية البطاقات:</label>
+      <input type="color" id="custom-bg-card-color" value="#ffffff" style="height:30px;" />
+      <label style="font-size: 11px;">لون النصوص:</label>
+      <input type="color" id="custom-text-color" value="#0f172a" style="height:30px;" />
       <hr style="border-color: var(--border-color); margin: 6px 0;" />
-
-      <label style="font-size: 11px;">خلفية قسم المحادثة:</label>
+      <label style="font-size: 11px;">خلفية القسم:</label>
       <select id="bg-section-selector">
         <option value="news">الأخبار</option>
         <option value="devs">مبرمجين</option>
@@ -488,7 +495,7 @@
         <option value="dubbers">مدبلجين</option>
       </select>
       <label class="file-input-btn" style="width:100%; text-align:center; margin-top:4px;">
-        رفع صورة خلفية للقسم المحدد
+        رفع صورة خلفية للقسم
         <input type="file" id="custom-section-bg-input" accept="image/*" />
       </label>
     </div>
@@ -496,7 +503,6 @@
     <label style="font-size: 11px; color: var(--text-secondary);">تعديل الاسم:</label>
     <input type="text" id="edit-username-input" />
 
-    <!-- خيار حذف الرسائل المؤقتة -->
     <div style="border-top:1px solid var(--border-color); padding-top:10px; margin-top:5px;">
       <button id="clear-cache-btn" class="primary-btn" style="background:#ef4444; width:100%; font-size:12px;">
         حذف الرسائل المؤقتة من الجهاز
@@ -521,7 +527,7 @@
     <button id="close-profile-modal-btn" class="icon-btn" style="justify-content:center;">إغلاق</button>
   </div>
 
-  <!-- الشاشة الرئيسية -->
+  <!-- الشاشة الرئيسية (تتضمن المحادثة والشريط الجانبي إن كان كمبيوتر) -->
   <div id="chat-screen" class="app-layout hidden">
     <div class="top-bar">
       <div id="open-sidebar-btn" class="user-profile-summary">
@@ -531,10 +537,14 @@
           <span id="admin-badge" class="admin-badge hidden">مسؤول</span>
         </div>
       </div>
-
+      
       <div class="top-actions">
-        <button id="theme-toggle-btn" class="icon-btn">الوضع النهاري</button>
-        <button id="members-list-btn" class="icon-btn">الأعضاء</button>
+        <button id="open-members-btn" class="icon-btn" title="قائمة الأعضاء">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </button>
+        <button id="theme-toggle-btn" class="icon-btn" title="الوضع الليلي والنهاري">
+          <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
       </div>
     </div>
 
@@ -547,25 +557,33 @@
         <button id="open-html-option">HTML</button>
       </div>
 
-      <!-- نموذج الإرسال -->
-      <form id="message-form" class="bottom-input-bar">
-        <button type="button" id="plus-btn" class="icon-btn" style="font-size: 18px; font-weight: bold; padding: 8px 12px; color: var(--accent-color);">+</button>
+      <!-- مربع التحكم بالرد والتعديل -->
+      <div class="form-container-wrapper">
+        <div id="action-preview-box" class="action-preview-box hidden">
+          <div style="display:flex; flex-direction:column; gap:4px; max-width:85%;">
+            <span id="action-preview-title" style="font-size: 11px; font-weight: bold; color: var(--accent-color);"></span>
+            <span id="action-preview-text" style="font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></span>
+          </div>
+          <button id="cancel-action-btn" class="icon-btn" style="padding:4px 8px; color:#ef4444; border:none; background:none;">X</button>
+        </div>
 
-        <!-- زر إرفاق الملفات المطور والكبير -->
-        <label id="file-label" class="file-input-btn" title="إرفاق ملف">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-          إرفاق ملف
-          <input type="file" id="media-file-input" accept="image/*,video/*,audio/*" style="display:none;" />
-        </label>
-
-        <button type="button" id="gif-btn" class="icon-btn" style="font-weight: bold; color: var(--accent-color); padding: 8px 12px;">GIF</button>
-
-        <input type="text" id="message-input" placeholder="اكتب رسالتك..." autocomplete="off" style="flex:1;" />
-        <button type="submit" id="send-btn" class="primary-btn">إرسال</button>
-      </form>
+        <!-- نموذج الإرسال -->
+        <form id="message-form" class="bottom-input-bar">
+          <button type="button" id="plus-btn" class="icon-btn" style="font-size: 18px; font-weight: bold; padding: 8px 12px; color: var(--accent-color);">+</button>
+          <label id="file-label" class="file-input-btn" title="إرفاق ملف">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+            إرفاق ملف
+            <input type="file" id="media-file-input" accept="image/*,video/*,audio/*" style="display:none;" />
+          </label>
+          <button type="button" id="gif-btn" class="icon-btn" style="font-weight: bold; color: var(--accent-color); padding: 8px 12px;">GIF</button>
+          
+          <input type="text" id="message-input" placeholder="اكتب رسالتك..." autocomplete="off" style="flex:1;" />
+          <button type="submit" id="send-btn" class="primary-btn">إرسال</button>
+        </form>
+      </div>
     </div>
 
-    <!-- الشريط السفلي للـ 5 أقسام -->
+    <!-- الشريط السفلي للأقسام -->
     <div class="bottom-nav-bar">
       <button class="nav-tab" data-section="devs">مبرمجين</button>
       <button class="nav-tab" data-section="artists">رسامين</button>
@@ -603,30 +621,12 @@
     let unsubscribeMessages = null;
     let activeProfileUser = null;
 
-    // إعداد الوضع الليلي والنهاري
-    let currentTheme = localStorage.getItem('fleed_theme') || 'light';
-    const themeToggleBtn = document.getElementById('theme-toggle-btn');
-    const sidebarThemeToggleBtn = document.getElementById('sidebar-theme-toggle-btn');
-
-    function applyTheme(theme) {
-      currentTheme = theme;
-      if (theme === 'dark') {
-        document.body.classList.add('dark-mode');
-        themeToggleBtn.innerText = 'الوضع النهاري';
-        sidebarThemeToggleBtn.innerText = 'الوضع النهاري';
-      } else {
-        document.body.classList.remove('dark-mode');
-        themeToggleBtn.innerText = 'الوضع الليلي';
-        sidebarThemeToggleBtn.innerText = 'الوضع الليلي';
-      }
-      localStorage.setItem('fleed_theme', theme);
-    }
-
-    themeToggleBtn.onclick = () => applyTheme(currentTheme === 'light' ? 'dark' : 'light');
-    sidebarThemeToggleBtn.onclick = () => applyTheme(currentTheme === 'light' ? 'dark' : 'light');
-    applyTheme(currentTheme);
+    // متغيرات التعديل والرد
+    let replyingToMsg = null;
+    let editingMsgId = null;
 
     // عناصر الصفحة
+    const deviceSelectionScreen = document.getElementById('device-selection-screen');
     const loginScreen = document.getElementById('login-screen');
     const bannedScreen = document.getElementById('banned-screen');
     const chatScreen = document.getElementById('chat-screen');
@@ -639,6 +639,7 @@
     const messagesContainer = document.getElementById('messages-container');
     const messageForm = document.getElementById('message-form');
     const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
 
     const drawerFenBalance = document.getElementById('drawer-fen-balance');
     const buyNitroBtn = document.getElementById('buy-nitro-btn');
@@ -653,109 +654,164 @@
     const editUsernameInput = document.getElementById('edit-username-input');
     const logoutBtn = document.getElementById('logout-btn');
 
+    // أزرار الرد والتعديل
+    const actionPreviewBox = document.getElementById('action-preview-box');
+    const actionPreviewTitle = document.getElementById('action-preview-title');
+    const actionPreviewText = document.getElementById('action-preview-text');
+    const cancelActionBtn = document.getElementById('cancel-action-btn');
+
+    cancelActionBtn.onclick = () => {
+      replyingToMsg = null;
+      editingMsgId = null;
+      actionPreviewBox.classList.add('hidden');
+      messageInput.value = '';
+      sendBtn.innerText = 'إرسال';
+    };
+
+    // الوضع الليلي / النهاري
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const moonSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+    const sunSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+
+    themeToggleBtn.onclick = () => {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      themeToggleBtn.innerHTML = isDark ? sunSvg : moonSvg;
+      localStorage.setItem('fleed_theme', isDark ? 'dark' : 'light');
+    };
+
+    // اختيار الجهاز عند البدء
+    window.onload = () => {
+      document.getElementById('login-avatar-preview').src = DEFAULT_AVATAR;
+      
+      // تطبيق الوضع الليلي المحفوظ
+      if (localStorage.getItem('fleed_theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggleBtn.innerHTML = sunSvg;
+      } else {
+        themeToggleBtn.innerHTML = moonSvg;
+      }
+
+      let selectedDevice = localStorage.getItem('fleed_device_preference');
+      if (!selectedDevice) {
+        deviceSelectionScreen.classList.remove('hidden');
+      } else {
+        applyDevicePreference(selectedDevice);
+        checkLoginState();
+      }
+    };
+
+    function applyDevicePreference(type) {
+      if (type === 'desktop') {
+        document.body.classList.add('desktop-mode-active');
+        sidebar.classList.add('open');
+      }
+      deviceSelectionScreen.classList.add('hidden');
+    }
+
+    document.getElementById('btn-device-mobile').onclick = () => {
+      localStorage.setItem('fleed_device_preference', 'mobile');
+      applyDevicePreference('mobile');
+      checkLoginState();
+    };
+
+    document.getElementById('btn-device-desktop').onclick = () => {
+      localStorage.setItem('fleed_device_preference', 'desktop');
+      applyDevicePreference('desktop');
+      checkLoginState();
+    };
+
+    function checkLoginState() {
+      if (currentUser && currentUser.name) {
+        initApp();
+      } else {
+        loginScreen.classList.remove('hidden');
+      }
+    }
+
     // فحص حظر الجهاز
     onSnapshot(doc(db, "banned_devices", deviceId), (docSnap) => {
       if (docSnap.exists()) {
         bannedScreen.classList.remove('hidden');
         chatScreen.classList.add('hidden');
         loginScreen.classList.add('hidden');
+        deviceSelectionScreen.classList.add('hidden');
       }
     });
 
-    // قائمة الأعضاء والحظر
-    const membersListBtn = document.getElementById('members-list-btn');
+    // قائمة الأعضاء وحظرهم
+    const openMembersBtn = document.getElementById('open-members-btn');
     const membersModal = document.getElementById('members-modal');
     const membersListContainer = document.getElementById('members-list-container');
-    const closeMembersModalBtn = document.getElementById('close-members-modal-btn');
+    const closeMembersBtn = document.getElementById('close-members-btn');
 
-    membersListBtn.onclick = async () => {
+    openMembersBtn.onclick = async () => {
+      membersListContainer.innerHTML = '<div style="text-align:center;">جاري التحميل...</div>';
       membersModal.classList.remove('hidden');
       modalOverlay.classList.add('active');
-      await loadMembersList();
+      
+      const snap = await getDocs(collection(db, "users_data"));
+      membersListContainer.innerHTML = '';
+      if(snap.empty) { membersListContainer.innerHTML = 'لا يوجد أعضاء بعد.'; return; }
+
+      snap.forEach(docSnap => {
+        const data = docSnap.data();
+        const memberName = docSnap.id;
+        
+        let adminBanHtml = '';
+        if (currentUser && currentUser.isAdmin && memberName !== currentUser.name) {
+          adminBanHtml = `<button class="ban-from-list-btn primary-btn" style="background:#ef4444; font-size:11px; padding:6px 10px;" data-name="${escapeHtml(memberName)}" data-device="${data.deviceId || ''}">حظر العضو</button>`;
+        }
+
+        membersListContainer.innerHTML += `
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:10px; background:var(--bg-main); border-radius:10px; border:1px solid var(--border-color);">
+              <div style="display:flex; align-items:center; gap:10px;">
+                  <img src="${data.avatar || DEFAULT_AVATAR}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border: 1px solid var(--accent-color);">
+                  <div style="text-align:right;">
+                      <div style="font-weight:bold; font-size:14px; color:var(--text-primary);">${escapeHtml(memberName)} ${getVerifiedBadgeHtml(data.isNitro)}</div>
+                      <div style="font-size:11px; color:var(--text-secondary);">آخر تسجيل: ${new Date(data.lastLogin || Date.now()).toLocaleDateString()}</div>
+                  </div>
+              </div>
+              ${adminBanHtml}
+          </div>`;
+      });
+
+      // إضافة أحداث الحظر
+      document.querySelectorAll('.ban-from-list-btn').forEach(btn => {
+        btn.onclick = async () => {
+          const targetName = btn.dataset.name;
+          const targetDevice = btn.dataset.device;
+          
+          if (!targetDevice) return alert("عذراً، لم يتم العثور على معرف جهاز هذا العضو للحظر.");
+          
+          if (confirm(`هل أنت متأكد من حظر العضو ${targetName} وحذف جميع رسائله؟`)) {
+            btn.innerText = "جاري الحظر...";
+            btn.disabled = true;
+            
+            await setDoc(doc(db, "banned_devices", targetDevice), { bannedAt: Date.now(), user: targetName });
+            
+            const q1 = query(collection(db, "messages"), where("senderDeviceId", "==", targetDevice));
+            const q2 = query(collection(db, "messages"), where("sender", "==", targetName));
+            const [snap1, snap2] = await Promise.all([getDocs(q1), getDocs(q2)]);
+            
+            const deletePromises = [];
+            snap1.forEach(d => deletePromises.push(deleteDoc(doc(db, "messages", d.id))));
+            snap2.forEach(d => deletePromises.push(deleteDoc(doc(db, "messages", d.id))));
+            await Promise.all(deletePromises);
+            
+            alert(`تم حظر ${targetName} وحذف رسائله بنجاح.`);
+            openMembersBtn.click(); // لتحديث القائمة بعد الحظر
+          }
+        };
+      });
     };
 
-    closeMembersModalBtn.onclick = () => {
+    closeMembersBtn.onclick = () => {
       membersModal.classList.add('hidden');
       if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
     };
 
-    async function loadMembersList() {
-      membersListContainer.innerHTML = '<div style="text-align:center; color:var(--text-secondary);">جاري تحميل الأعضاء...</div>';
-      try {
-        const querySnapshot = await getDocs(collection(db, "users_data"));
-        membersListContainer.innerHTML = '';
-        if (querySnapshot.empty) {
-          membersListContainer.innerHTML = '<div style="text-align:center; color:var(--text-secondary);">لا يوجد أعضاء متواجدين حالياً.</div>';
-          return;
-        }
-
-        querySnapshot.forEach(docSnap => {
-          const uData = docSnap.data();
-          const uName = uData.name || docSnap.id;
-          const uDevId = uData.deviceId || '';
-          const uAvatar = uData.avatar || DEFAULT_AVATAR;
-          const uIsAdmin = Boolean(uData.isAdmin);
-          const uIsNitro = Boolean(uData.isNitro);
-
-          const item = document.createElement('div');
-          item.style.cssText = "display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:var(--bg-main); border:1px solid var(--border-color); border-radius:10px;";
-          
-          let banBtnHtml = '';
-          if (currentUser && currentUser.isAdmin && uDevId && uName !== currentUser.name) {
-            banBtnHtml = `<button class="ban-member-btn primary-btn" style="background:#ef4444; font-size:11px; padding:4px 10px;" data-name="${escapeHtml(uName)}" data-device="${uDevId}">حظر</button>`;
-          }
-
-          item.innerHTML = `
-            <div style="display:flex; align-items:center; gap:10px;">
-              <img src="${uAvatar}" style="width:34px; height:34px; border-radius:50%; object-fit:cover; border:1px solid var(--accent-color);" />
-              <div style="text-align:right;">
-                <span style="font-weight:bold; font-size:13px; display:inline-flex; align-items:center;">${escapeHtml(uName)} ${getVerifiedBadgeHtml(uIsNitro)}</span>
-                ${uIsAdmin ? '<span class="admin-badge">مسؤول</span>' : ''}
-              </div>
-            </div>
-            ${banBtnHtml}
-          `;
-
-          const banBtn = item.querySelector('.ban-member-btn');
-          if (banBtn) {
-            banBtn.onclick = async () => {
-              const bName = banBtn.dataset.name;
-              const bDev = banBtn.dataset.device;
-              if (confirm(`هل أنت تأكد من حظر العضو ${bName} وحذف كافة رسائله نهائياً؟`)) {
-                await banUserDeviceAndMessages(bName, bDev);
-                await loadMembersList();
-              }
-            };
-          }
-
-          membersListContainer.appendChild(item);
-        });
-      } catch (err) {
-        membersListContainer.innerHTML = '<div style="text-align:center; color:#ef4444;">حدث خطأ في جلب الأعضاء.</div>';
-      }
-    }
-
-    async function banUserDeviceAndMessages(targetName, targetDeviceId) {
-      await setDoc(doc(db, "banned_devices", targetDeviceId), {
-        bannedAt: Date.now(),
-        user: targetName
-      });
-
-      const q1 = query(collection(db, "messages"), where("senderDeviceId", "==", targetDeviceId));
-      const q2 = query(collection(db, "messages"), where("sender", "==", targetName));
-
-      const snap1 = await getDocs(q1);
-      const snap2 = await getDocs(q2);
-
-      const deletePromises = [];
-      snap1.forEach(docSnap => deletePromises.push(deleteDoc(doc(db, "messages", docSnap.id))));
-      snap2.forEach(docSnap => deletePromises.push(deleteDoc(doc(db, "messages", docSnap.id))));
-
-      await Promise.all(deletePromises);
-      alert(`تم حظر العضو ${targetName} ومسح جميع رسائله بنجاح!`);
-    }
-
-    // زر + والقائمة الفرعية
+    // زر +
     const plusBtn = document.getElementById('plus-btn');
     const plusMenu = document.getElementById('plus-menu');
     plusBtn.onclick = (e) => {
@@ -764,44 +820,38 @@
     };
     document.addEventListener('click', () => plusMenu.classList.add('hidden'));
 
-    // البحث والتنقيب التلقائي عن GIF
+    // البحث في GIF
     const gifBtn = document.getElementById('gif-btn');
     const gifModal = document.getElementById('gif-modal');
     const gifGrid = document.getElementById('gif-grid');
     const gifSearchInput = document.getElementById('gif-search-input');
-    const GIPHY_API_KEY = "pXJ391l4m9Uf4zX23c52a0a3";
+    const GIPHY_API_KEY = "GlV1332yA39622gWSPGl30P3v3R32s8R";
 
     gifBtn.onclick = () => {
       gifModal.classList.remove('hidden');
       modalOverlay.classList.add('active');
-      gifSearchInput.value = '';
       fetchGifs('trending');
     };
 
-    let searchTimer = null;
     gifSearchInput.addEventListener('input', (e) => {
-      clearTimeout(searchTimer);
       const q = e.target.value.trim();
-      searchTimer = setTimeout(() => {
-        if (q) fetchGifs('search', q);
-        else fetchGifs('trending');
-      }, 300);
+      if (q) fetchGifs('search', q);
+      else fetchGifs('trending');
     });
 
     async function fetchGifs(type, query = '') {
-      gifGrid.innerHTML = '<div style="grid-column: span 2; text-align:center; color:var(--text-secondary);">جاري تحميل GIF...</div>';
+      gifGrid.innerHTML = '<div style="grid-column: span 2; text-align:center;">جاري التحميل...</div>';
       try {
         const url = type === 'search' 
-          ? `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(query)}&limit=16&rating=g`
-          : `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=16&rating=g`;
+          ? `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(query)}&limit=12`
+          : `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=12`;
         
         const res = await fetch(url);
         const data = await res.json();
         gifGrid.innerHTML = '';
-
-        if (data && data.data && data.data.length > 0) {
+        if (data.data && data.data.length > 0) {
           data.data.forEach(item => {
-            const imgUrl = item.images.fixed_height.url || item.images.downsized_medium.url;
+            const imgUrl = item.images.fixed_height.url;
             const img = document.createElement('img');
             img.src = imgUrl;
             img.style.cssText = "width:100%; height:95px; object-fit:cover; border-radius:8px; cursor:pointer;";
@@ -809,37 +859,31 @@
             gifGrid.appendChild(img);
           });
         } else {
-          gifGrid.innerHTML = '<div style="grid-column: span 2; text-align:center; color:var(--text-secondary);">لم يتم العثور على نتائج.</div>';
+          gifGrid.innerHTML = '<div style="grid-column: span 2; text-align:center;">لم يتم العثور على نتائج.</div>';
         }
       } catch (err) {
-        gifGrid.innerHTML = '<div style="grid-column: span 2; text-align:center; color:#ef4444;">حدث خطأ أثناء تحميل صور GIF.</div>';
+        gifGrid.innerHTML = '<div style="grid-column: span 2; text-align:center;">حدث خطأ أثناء الاتصال.</div>';
       }
     }
 
     document.getElementById('close-gif-modal-btn').onclick = () => {
       gifModal.classList.add('hidden');
-      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+      if (!document.body.classList.contains('desktop-mode-active') && !sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
     };
 
     async function sendGif(url) {
-      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
-        alert("قسم الأخبار مخصص للمسؤولين فقط.");
-        return;
-      }
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) return alert("القسم للمسؤولين فقط.");
       gifModal.classList.add('hidden');
-      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+      if (!document.body.classList.contains('desktop-mode-active')) modalOverlay.classList.remove('active');
 
       const msgData = {
-        section: currentSection,
-        sender: currentUser.name,
-        avatar: currentUser.avatar || DEFAULT_AVATAR,
-        senderDeviceId: deviceId,
-        text: '',
-        timestamp: Date.now(),
-        file: { data: url, type: 'image/gif', name: 'GIF' },
-        isNitro: Boolean(currentUser.isNitro)
+        section: currentSection, sender: currentUser.name, avatar: currentUser.avatar || DEFAULT_AVATAR,
+        senderDeviceId: deviceId, text: '', timestamp: Date.now(),
+        file: { data: url, type: 'image/gif', name: 'GIF' }, isNitro: Boolean(currentUser.isNitro)
       };
+      if (replyingToMsg) msgData.replyTo = replyingToMsg;
       await addDoc(collection(db, "messages"), msgData);
+      cancelActionBtn.click();
     }
 
     // قسم الرسم والطبقات
@@ -872,117 +916,66 @@
 
     function createNewLayer() {
       const canvas = document.createElement('canvas');
-      canvas.width = 350;
-      canvas.height = 450;
-      canvas.className = 'drawing-layer-canvas';
+      canvas.width = 350; canvas.height = 450; canvas.className = 'drawing-layer-canvas';
       drawingPaper.appendChild(canvas);
-
       const ctx = canvas.getContext('2d');
       layers.push({ canvas, ctx });
       currentLayerIndex = layers.length - 1;
-
       updateLayerSelect();
       setupDrawingEvents(canvas, ctx);
     }
-
     addLayerBtn.onclick = () => createNewLayer();
 
     function updateLayerSelect() {
       layerSelect.innerHTML = '';
       layers.forEach((l, idx) => {
         const opt = document.createElement('option');
-        opt.value = idx;
-        opt.innerText = `طبقة ${idx + 1}`;
+        opt.value = idx; opt.innerText = `طبقة ${idx + 1}`;
         if (idx === currentLayerIndex) opt.selected = true;
         layerSelect.appendChild(opt);
       });
     }
-
-    layerSelect.onchange = (e) => {
-      currentLayerIndex = parseInt(e.target.value);
-    };
+    layerSelect.onchange = (e) => currentLayerIndex = parseInt(e.target.value);
 
     function setupDrawingEvents(canvas, ctx) {
       function getPos(e) {
         const rect = canvas.getBoundingClientRect();
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return {
-          x: (clientX - rect.left) / drawingZoom,
-          y: (clientY - rect.top) / drawingZoom
-        };
+        return { x: (clientX - rect.left) / drawingZoom, y: (clientY - rect.top) / drawingZoom };
       }
-
-      function startDraw(e) {
-        isDrawing = true;
-        const pos = getPos(e);
-        ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y);
-      }
-
+      function startDraw(e) { isDrawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); }
       function draw(e) {
         if (!isDrawing) return;
-        const pos = getPos(e);
-        ctx.strokeStyle = brushColor.value;
-        ctx.lineWidth = brushSize.value;
-        ctx.lineCap = 'round';
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
+        const pos = getPos(e); ctx.strokeStyle = brushColor.value; ctx.lineWidth = brushSize.value; ctx.lineCap = 'round'; ctx.lineTo(pos.x, pos.y); ctx.stroke();
       }
-
       function stopDraw() { isDrawing = false; }
-
-      canvas.addEventListener('mousedown', startDraw);
-      canvas.addEventListener('mousemove', draw);
-      canvas.addEventListener('mouseup', stopDraw);
-      canvas.addEventListener('touchstart', startDraw);
-      canvas.addEventListener('touchmove', draw);
-      canvas.addEventListener('touchend', stopDraw);
+      canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', stopDraw);
+      canvas.addEventListener('touchstart', startDraw); canvas.addEventListener('touchmove', draw); canvas.addEventListener('touchend', stopDraw);
     }
 
-    clearCanvasBtn.onclick = () => {
-      if (layers[currentLayerIndex]) {
-        const c = layers[currentLayerIndex].canvas;
-        layers[currentLayerIndex].ctx.clearRect(0, 0, c.width, c.height);
-      }
-    };
-
+    clearCanvasBtn.onclick = () => { if (layers[currentLayerIndex]) layers[currentLayerIndex].ctx.clearRect(0, 0, 350, 450); };
     zoomInBtn.onclick = () => { drawingZoom += 0.2; applyZoom(); };
     zoomOutBtn.onclick = () => { if (drawingZoom > 0.4) drawingZoom -= 0.2; applyZoom(); };
     zoomResetBtn.onclick = () => { drawingZoom = 1; applyZoom(); };
-
-    function applyZoom() {
-      drawingPaper.style.transform = `scale(${drawingZoom})`;
-    }
+    function applyZoom() { drawingPaper.style.transform = `scale(${drawingZoom})`; }
 
     sendDrawingBtn.onclick = async () => {
-      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
-        alert("قسم الأخبار مخصص للمسؤولين فقط.");
-        return;
-      }
-      const mergedCanvas = document.createElement('canvas');
-      mergedCanvas.width = 350;
-      mergedCanvas.height = 450;
-      const mCtx = mergedCanvas.getContext('2d');
-      mCtx.fillStyle = "#ffffff";
-      mCtx.fillRect(0, 0, 350, 450);
-
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) return alert("القسم للمسؤولين فقط.");
+      const mCanvas = document.createElement('canvas'); mCanvas.width = 350; mCanvas.height = 450;
+      const mCtx = mCanvas.getContext('2d'); mCtx.fillStyle = "#ffffff"; mCtx.fillRect(0, 0, 350, 450);
       layers.forEach(l => mCtx.drawImage(l.canvas, 0, 0));
-      const drawingDataUrl = mergedCanvas.toDataURL('image/png');
-
+      const drawingDataUrl = mCanvas.toDataURL('image/png');
       drawingSection.classList.add('hidden');
 
       const msgData = {
-        section: currentSection,
-        sender: currentUser.name,
-        avatar: currentUser.avatar || DEFAULT_AVATAR,
-        senderDeviceId: deviceId,
-        text: 'رسمة مخصصة',
-        timestamp: Date.now(),
-        file: { data: drawingDataUrl, type: 'image/png', name: 'drawing.png' },
-        isNitro: Boolean(currentUser.isNitro)
+        section: currentSection, sender: currentUser.name, avatar: currentUser.avatar || DEFAULT_AVATAR,
+        senderDeviceId: deviceId, text: 'رسمة مخصصة', timestamp: Date.now(),
+        file: { data: drawingDataUrl, type: 'image/png', name: 'drawing.png' }, isNitro: Boolean(currentUser.isNitro)
       };
+      if (replyingToMsg) msgData.replyTo = replyingToMsg;
       await addDoc(collection(db, "messages"), msgData);
+      cancelActionBtn.click();
     };
 
     // قسم محرر HTML والألعاب
@@ -991,126 +984,78 @@
     const closeHtmlEditorBtn = document.getElementById('close-html-editor-btn');
     const sendHtmlBtn = document.getElementById('send-html-btn');
     const htmlCodeInput = document.getElementById('html-code-input');
-
     const htmlRunnerModal = document.getElementById('html-runner-modal');
     const htmlRunnerFrame = document.getElementById('html-runner-frame');
     const closeHtmlRunnerBtn = document.getElementById('close-html-runner-btn');
 
     openHtmlOption.onclick = () => {
-      plusMenu.classList.add('hidden');
-      htmlEditorModal.classList.remove('hidden');
-      modalOverlay.classList.add('active');
+      plusMenu.classList.add('hidden'); htmlEditorModal.classList.remove('hidden'); modalOverlay.classList.add('active');
     };
-
     closeHtmlEditorBtn.onclick = () => {
       htmlEditorModal.classList.add('hidden');
-      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+      if (!document.body.classList.contains('desktop-mode-active') && !sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
     };
-
     sendHtmlBtn.onclick = async () => {
-      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
-        alert("قسم الأخبار مخصص للمسؤولين فقط.");
-        return;
-      }
-      const code = htmlCodeInput.value.trim();
-      if (!code) return alert("اكتب الكود أولاً!");
-
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) return alert("القسم للمسؤولين فقط.");
+      const code = htmlCodeInput.value.trim(); if (!code) return alert("اكتب الكود أولاً!");
       htmlEditorModal.classList.add('hidden');
-      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+      if (!document.body.classList.contains('desktop-mode-active')) modalOverlay.classList.remove('active');
 
       const msgData = {
-        section: currentSection,
-        sender: currentUser.name,
-        avatar: currentUser.avatar || DEFAULT_AVATAR,
-        senderDeviceId: deviceId,
-        text: '',
-        htmlAppCode: code,
-        timestamp: Date.now(),
-        isNitro: Boolean(currentUser.isNitro)
+        section: currentSection, sender: currentUser.name, avatar: currentUser.avatar || DEFAULT_AVATAR,
+        senderDeviceId: deviceId, text: '', htmlAppCode: code, timestamp: Date.now(), isNitro: Boolean(currentUser.isNitro)
       };
+      if (replyingToMsg) msgData.replyTo = replyingToMsg;
       await addDoc(collection(db, "messages"), msgData);
+      cancelActionBtn.click();
     };
-
     window.runHtmlAppCode = (encodedCode) => {
-      const code = decodeURIComponent(encodedCode);
-      htmlRunnerFrame.srcdoc = code;
-      htmlRunnerModal.classList.remove('hidden');
+      htmlRunnerFrame.srcdoc = decodeURIComponent(encodedCode); htmlRunnerModal.classList.remove('hidden');
     };
-
-    closeHtmlRunnerBtn.onclick = () => {
-      htmlRunnerModal.classList.add('hidden');
-      htmlRunnerFrame.srcdoc = '';
-    };
+    closeHtmlRunnerBtn.onclick = () => { htmlRunnerModal.classList.add('hidden'); htmlRunnerFrame.srcdoc = ''; };
 
     // Cropper وتعديل الصورة الشخصية
-    let cropperInstance = null;
-    let cropTargetType = 'login';
+    let cropperInstance = null; let cropTargetType = 'login';
     const cropperModal = document.getElementById('cropper-modal');
     const cropperTargetImg = document.getElementById('cropper-target-img');
     const cropSaveBtn = document.getElementById('crop-save-btn');
     const cropCancelBtn = document.getElementById('crop-cancel-btn');
 
     function openCropper(imageSrc, targetType) {
-      cropTargetType = targetType;
-      cropperTargetImg.src = imageSrc;
-      cropperModal.classList.remove('hidden');
-      modalOverlay.classList.add('active');
-
+      cropTargetType = targetType; cropperTargetImg.src = imageSrc;
+      cropperModal.classList.remove('hidden'); modalOverlay.classList.add('active');
       if (cropperInstance) cropperInstance.destroy();
-      cropperInstance = new Cropper(cropperTargetImg, {
-        aspectRatio: 1, viewMode: 1, autoCropArea: 0.8
-      });
+      cropperInstance = new Cropper(cropperTargetImg, { aspectRatio: 1, viewMode: 1, autoCropArea: 0.8 });
     }
-
     cropSaveBtn.onclick = () => {
       if (!cropperInstance) return;
       const canvas = cropperInstance.getCroppedCanvas({ width: 300, height: 300 });
       const croppedBase64 = canvas.toDataURL('image/jpeg', 0.9);
-
       if (cropTargetType === 'login') {
-        tempAvatar = croppedBase64;
-        document.getElementById('login-avatar-preview').src = croppedBase64;
+        tempAvatar = croppedBase64; document.getElementById('login-avatar-preview').src = croppedBase64;
       } else {
-        currentUser.avatar = croppedBase64;
-        document.getElementById('edit-avatar-preview').src = croppedBase64;
-        headerAvatarImg.src = croppedBase64;
-        localStorage.setItem('fleed_studio_user', JSON.stringify(currentUser));
-
-        setDoc(doc(db, "users_data", currentUser.name), {
-          avatar: croppedBase64
-        }, { merge: true });
+        currentUser.avatar = croppedBase64; document.getElementById('edit-avatar-preview').src = croppedBase64;
+        headerAvatarImg.src = croppedBase64; localStorage.setItem('fleed_studio_user', JSON.stringify(currentUser));
       }
       closeCropper();
     };
-
     function closeCropper() {
       cropperModal.classList.add('hidden');
       if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+      if (!document.body.classList.contains('desktop-mode-active') && !sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
     }
     cropCancelBtn.onclick = closeCropper;
-
     document.getElementById('login-avatar-file').addEventListener('change', (e) => {
-      if (e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (evt) => openCropper(evt.target.result, 'login');
-        reader.readAsDataURL(e.target.files[0]);
-      }
+      if (e.target.files[0]) { const reader = new FileReader(); reader.onload = (evt) => openCropper(evt.target.result, 'login'); reader.readAsDataURL(e.target.files[0]); }
     });
-
     document.getElementById('edit-avatar-file').addEventListener('change', (e) => {
-      if (e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (evt) => openCropper(evt.target.result, 'edit');
-        reader.readAsDataURL(e.target.files[0]);
-      }
+      if (e.target.files[0]) { const reader = new FileReader(); reader.onload = (evt) => openCropper(evt.target.result, 'edit'); reader.readAsDataURL(e.target.files[0]); }
     });
 
     // حذف الرسائل المؤقتة
     document.getElementById('clear-cache-btn').onclick = () => {
       if (confirm('هل أنت تأكد من حذف الرسائل المؤقتة المخزنة على هذا الجهاز؟')) {
-        messagesContainer.innerHTML = '';
-        alert('تم مسح ذاكرة الرسائل المؤقتة بنجاح!');
+        messagesContainer.innerHTML = ''; alert('تم مسح ذاكرة الرسائل المؤقتة بنجاح!');
       }
     };
 
@@ -1122,23 +1067,16 @@
           const data = docSnap.data();
           drawerFenBalance.innerText = data.fenBalance || 0;
           currentUser.isNitro = !!data.isNitro;
-          currentUser.customAccent = data.customAccent || '';
-          currentUser.customBgMain = data.customBgMain || '';
-          currentUser.customBgCard = data.customBgCard || '';
-          currentUser.customTextColor = data.customTextColor || '';
+          currentUser.customAccent = data.customAccent || ''; currentUser.customBgMain = data.customBgMain || '';
+          currentUser.customBgCard = data.customBgCard || ''; currentUser.customTextColor = data.customTextColor || '';
           currentUser.customBgs = data.customBgs || {};
-
-          updateNitroUI();
-          applyCustomThemeSettings();
+          updateNitroUI(); applyCustomThemeSettings();
         }
         updateUserHeaderDisplay();
       });
     }
 
-    function getVerifiedBadgeHtml(isNitro) {
-      return isNitro ? `<span class="verified-badge" title="حساب موثق"></span>` : '';
-    }
-
+    function getVerifiedBadgeHtml(isNitro) { return isNitro ? `<span class="verified-badge" title="حساب موثق"></span>` : ''; }
     function updateUserHeaderDisplay() {
       if (!currentUser) return;
       userDisplay.innerHTML = `${escapeHtml(currentUser.name)} ${getVerifiedBadgeHtml(currentUser.isNitro)}`;
@@ -1147,15 +1085,9 @@
 
     function updateNitroUI() {
       if (currentUser && currentUser.isNitro) {
-        nitroStatusText.innerText = "حسابك مفعل بخدمة نيترو المميزة";
-        buyNitroBtn.innerText = "أنت مشترك بالنيترو";
-        buyNitroBtn.disabled = true;
-        nitroSettingsBox.classList.remove('hidden');
+        nitroStatusText.innerText = "حسابك مفعل بخدمة نيترو المميزة"; buyNitroBtn.innerText = "أنت مشترك بالنيترو"; buyNitroBtn.disabled = true; nitroSettingsBox.classList.remove('hidden');
       } else {
-        nitroStatusText.innerText = "تخصيص كامل لألوان وخلفيات جميع الأقسام!";
-        buyNitroBtn.innerText = "تفعيل نيترو (100 FEN)";
-        buyNitroBtn.disabled = false;
-        nitroSettingsBox.classList.add('hidden');
+        nitroStatusText.innerText = "تخصيص كامل لألوان وخلفيات جميع الأقسام!"; buyNitroBtn.innerText = "تفعيل نيترو (100 FEN)"; buyNitroBtn.disabled = false; nitroSettingsBox.classList.add('hidden');
       }
     }
 
@@ -1163,92 +1095,51 @@
       if (currentUser && currentUser.isNitro) {
         if (currentUser.customAccent) document.documentElement.style.setProperty('--accent-color', currentUser.customAccent);
         if (currentUser.customBgMain) document.documentElement.style.setProperty('--bg-main', currentUser.customBgMain);
-        if (currentUser.customBgCard) {
-          document.documentElement.style.setProperty('--bg-card', currentUser.customBgCard);
-          document.documentElement.style.setProperty('--bg-sidebar', currentUser.customBgCard);
-        }
+        if (currentUser.customBgCard) { document.documentElement.style.setProperty('--bg-card', currentUser.customBgCard); document.documentElement.style.setProperty('--bg-sidebar', currentUser.customBgCard); }
         if (currentUser.customTextColor) document.documentElement.style.setProperty('--text-primary', currentUser.customTextColor);
-
         const sectionBg = currentUser.customBgs && currentUser.customBgs[currentSection];
-        if (sectionBg) {
-          messagesContainer.style.backgroundImage = `url(${sectionBg})`;
-          messagesContainer.style.backgroundSize = 'cover';
-          messagesContainer.style.backgroundPosition = 'center';
-        } else {
-          messagesContainer.style.backgroundImage = '';
-        }
+        if (sectionBg) { messagesContainer.style.backgroundImage = `url(${sectionBg})`; messagesContainer.style.backgroundSize = 'cover'; messagesContainer.style.backgroundPosition = 'center'; } else { messagesContainer.style.backgroundImage = ''; }
       } else {
-        document.documentElement.style.removeProperty('--accent-color');
-        document.documentElement.style.removeProperty('--bg-main');
-        document.documentElement.style.removeProperty('--bg-card');
-        document.documentElement.style.removeProperty('--bg-sidebar');
-        document.documentElement.style.removeProperty('--text-primary');
-        messagesContainer.style.backgroundImage = '';
+        document.documentElement.style.removeProperty('--accent-color'); document.documentElement.style.removeProperty('--bg-main');
+        document.documentElement.style.removeProperty('--bg-card'); document.documentElement.style.removeProperty('--bg-sidebar');
+        document.documentElement.style.removeProperty('--text-primary'); messagesContainer.style.backgroundImage = '';
       }
     }
 
     buyNitroBtn.onclick = async () => {
       const currentBal = parseInt(drawerFenBalance.innerText) || 0;
       if (currentBal < 100) return alert("رصيدك غير كافٍ! تحتاج 100 FEN.");
-
       if (confirm("اشتراك في نيترو مقابل 100 FEN؟")) {
-        await setDoc(doc(db, "users_data", currentUser.name), {
-          fenBalance: increment(-100),
-          isNitro: true
-        }, { merge: true });
+        await setDoc(doc(db, "users_data", currentUser.name), { fenBalance: increment(-100), isNitro: true }, { merge: true });
         alert("تم تفعيل النيترو وتوثيق حسابك!");
       }
     };
 
     // تسجيل الدخول
     joinBtn.onclick = async () => {
-      let rawName = usernameInput.value.trim();
-      const pass = passwordInput.value.trim();
-
+      let rawName = usernameInput.value.trim(); const pass = passwordInput.value.trim();
       if (!rawName || !pass) return alert('أدخل الاسم وكلمة المرور');
 
       let isAdmin = false;
-      if (rawName.includes(ADMIN_SECRET)) {
-        isAdmin = true;
-        rawName = rawName.replace(ADMIN_SECRET, '').trim();
-      }
+      if (rawName.includes(ADMIN_SECRET)) { isAdmin = true; rawName = rawName.replace(ADMIN_SECRET, '').trim(); }
 
       currentUser = { name: rawName, pass: pass, avatar: tempAvatar, isAdmin: isAdmin, deviceId: deviceId };
       localStorage.setItem('fleed_studio_user', JSON.stringify(currentUser));
-
-      await setDoc(doc(db, "users_data", rawName), {
-        name: rawName,
-        deviceId: deviceId,
-        avatar: tempAvatar,
-        isAdmin: isAdmin,
-        lastActive: Date.now()
+      
+      // حفظ بيانات العضو ومعرف الجهاز للقائمة والحظر
+      await setDoc(doc(db, "users_data", currentUser.name), {
+        lastLogin: Date.now(), avatar: tempAvatar || DEFAULT_AVATAR, deviceId: deviceId
       }, { merge: true });
 
       loginScreen.classList.add('hidden');
       initApp();
     };
 
-    window.onload = () => {
-      document.getElementById('login-avatar-preview').src = DEFAULT_AVATAR;
-      if (currentUser && currentUser.name) {
-        loginScreen.classList.add('hidden');
-        initApp();
-      }
-    };
-
     function initApp() {
+      loginScreen.classList.add('hidden');
       headerAvatarImg.src = currentUser.avatar || DEFAULT_AVATAR;
       if (currentUser.isAdmin) adminBadge.classList.remove('hidden');
       chatScreen.classList.remove('hidden');
-
-      setDoc(doc(db, "users_data", currentUser.name), {
-        name: currentUser.name,
-        deviceId: deviceId,
-        avatar: currentUser.avatar || DEFAULT_AVATAR,
-        isAdmin: Boolean(currentUser.isAdmin),
-        lastActive: Date.now()
-      }, { merge: true });
-
       listenToUserData();
       switchSection('news');
     }
@@ -1256,80 +1147,56 @@
     const navTabs = document.querySelectorAll('.nav-tab');
     navTabs.forEach(tab => {
       tab.onclick = () => {
-        navTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
+        navTabs.forEach(t => t.classList.remove('active')); tab.classList.add('active');
         switchSection(tab.dataset.section);
       };
     });
 
-    // التنقل بين الأقسام وحماية قسم الأخبار
     function switchSection(sec) {
-      currentSection = sec;
-      applyCustomThemeSettings();
-
-      const sendBtn = document.getElementById('send-btn');
-      const plusBtn = document.getElementById('plus-btn');
-      const gifBtn = document.getElementById('gif-btn');
-      const mediaFileInput = document.getElementById('media-file-input');
-      const fileLabel = document.getElementById('file-label');
-
+      currentSection = sec; applyCustomThemeSettings();
       const isNewsNotAdmin = (sec === 'news' && (!currentUser || !currentUser.isAdmin));
-
-      if (isNewsNotAdmin) {
-        messageInput.disabled = true;
-        messageInput.placeholder = "قسم الأخبار مخصص للمسؤولين فقط";
-        sendBtn.disabled = true;
-        plusBtn.disabled = true;
-        gifBtn.disabled = true;
-        mediaFileInput.disabled = true;
-        fileLabel.style.opacity = '0.5';
-        fileLabel.style.pointerEvents = 'none';
-      } else {
-        messageInput.disabled = false;
-        messageInput.placeholder = "اكتب رسالتك...";
-        sendBtn.disabled = false;
-        plusBtn.disabled = false;
-        gifBtn.disabled = false;
-        mediaFileInput.disabled = false;
-        fileLabel.style.opacity = '1';
-        fileLabel.style.pointerEvents = 'auto';
-      }
-
+      messageInput.disabled = isNewsNotAdmin; messageInput.placeholder = isNewsNotAdmin ? "قسم الأخبار مخصص للمسؤولين فقط" : "اكتب رسالتك...";
+      sendBtn.disabled = isNewsNotAdmin; plusBtn.disabled = isNewsNotAdmin; gifBtn.disabled = isNewsNotAdmin;
+      document.getElementById('media-file-input').disabled = isNewsNotAdmin;
+      document.getElementById('file-label').style.opacity = isNewsNotAdmin ? '0.5' : '1';
+      document.getElementById('file-label').style.pointerEvents = isNewsNotAdmin ? 'none' : 'auto';
+      cancelActionBtn.click(); // إلغاء الرد/التعديل عند تغيير القسم
       listenToSectionMessages(sec);
     }
 
-    // إرسال وقراءة الرسائل
+    // إرسال وتعديل الرسائل
     messageForm.onsubmit = async (e) => {
       e.preventDefault();
-      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
-        alert("عذراً، قسم الأخبار مخصص للمسؤولين فقط.");
-        return;
-      }
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) return alert("عذراً، القسم مخصص للمسؤولين فقط.");
 
       const text = messageInput.value.trim();
       if (!text) return;
 
+      if (editingMsgId) {
+        await updateDoc(doc(db, "messages", editingMsgId), {
+          text: text, isEdited: true
+        });
+        cancelActionBtn.click();
+        return;
+      }
+
       const msgData = {
-        section: currentSection,
-        sender: currentUser.name,
-        avatar: currentUser.avatar || DEFAULT_AVATAR,
-        senderDeviceId: deviceId,
-        text: text,
-        timestamp: Date.now(),
-        isNitro: Boolean(currentUser.isNitro)
+        section: currentSection, sender: currentUser.name, avatar: currentUser.avatar || DEFAULT_AVATAR,
+        senderDeviceId: deviceId, text: text, timestamp: Date.now(), isNitro: Boolean(currentUser.isNitro)
       };
 
+      if (replyingToMsg) msgData.replyTo = replyingToMsg;
+
       messageInput.value = '';
+      cancelActionBtn.click();
       await addDoc(collection(db, "messages"), msgData);
     };
 
     function listenToSectionMessages(sec) {
       if (unsubscribeMessages) unsubscribeMessages();
       const q = query(collection(db, "messages"), where("section", "==", sec));
-
       unsubscribeMessages = onSnapshot(q, (snapshot) => {
-        const msgs = [];
-        snapshot.forEach(doc => msgs.push({ id: doc.id, ...doc.data() }));
+        const msgs = []; snapshot.forEach(doc => msgs.push({ id: doc.id, ...doc.data() }));
         msgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
         renderMessages(msgs);
       });
@@ -1351,76 +1218,86 @@
         div.className = `message-item ${isMine ? 'mine' : ''}`;
 
         let mediaHtml = '';
-        if (msg.file && msg.file.data) {
-          mediaHtml = `<div class="media-container"><img class="media-attachment" src="${msg.file.data}" style="max-width:100%; max-height:240px; border-radius:10px; margin-top:6px;" /></div>`;
+        if (msg.file && msg.file.data) mediaHtml = `<div class="media-container"><img class="media-attachment" src="${msg.file.data}" style="max-width:100%; max-height:240px; border-radius:10px; margin-top:6px;" /></div>`;
+
+        let replyBoxHtml = '';
+        if (msg.replyTo) {
+          replyBoxHtml = `
+            <div class="reply-quote-box">
+              <strong style="color:var(--accent-color); font-size:11px;">${escapeHtml(msg.replyTo.sender)}</strong>
+              <div style="opacity: 0.8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;">${escapeHtml(msg.replyTo.text)}</div>
+            </div>`;
         }
 
+        let editedHtml = msg.isEdited ? `<span style="font-size:10px; opacity:0.6; margin-right:6px;">(معدلة)</span>` : '';
         let bodyContent = '';
         if (msg.htmlAppCode) {
           const encoded = encodeURIComponent(msg.htmlAppCode);
-          bodyContent = `
-            <div class="html-app-card" onclick="window.runHtmlAppCode('${encoded}')">
-              <span style="font-weight:bold; font-size:14px; color:#93c5fd;">[ تطبيق / لعبة ]</span>
-              <span style="font-size:11px; opacity:0.8;">اضغط للتطبيق والتشغيل بملء الشاشة</span>
-            </div>
-          `;
+          bodyContent = `<div class="html-app-card" onclick="window.runHtmlAppCode('${encoded}')"><span style="font-weight:bold; font-size:14px; color:#93c5fd;">[ تطبيق / لعبة ]</span><span style="font-size:11px; opacity:0.8;">اضغط للتشغيل</span></div>`;
         } else {
-          bodyContent = `
-            <div class="message-bubble">
-              ${formatMessageText(msg.text)}
-              ${mediaHtml}
-            </div>
-          `;
+          bodyContent = `<div class="message-bubble">${replyBoxHtml}${formatMessageText(msg.text)}${editedHtml}${mediaHtml}</div>`;
         }
 
-        let optionsBtnHtml = '';
-        if (isMine || currentUser.isAdmin) {
-          optionsBtnHtml = `
-            <div class="msg-menu-container" style="position:relative;">
-              <button class="msg-options-btn" style="background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:16px;">...</button>
-              <div class="msg-dropdown hidden">
-                <button class="delete-msg-btn" data-id="${msg.id}" style="color:#ef4444;">حذف</button>
-              </div>
-            </div>
-          `;
+        let optionsBtnHtml = `
+          <div class="msg-menu-container" style="position:relative;">
+            <button class="msg-options-btn" style="background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:16px;">...</button>
+            <div class="msg-dropdown hidden">
+              <button class="reply-msg-btn" data-id="${msg.id}" data-sender="${escapeHtml(msg.sender)}" data-text="${escapeHtml(msg.text || 'مرفق')}">رد</button>
+        `;
+        if (isMine) {
+          if (msg.text) optionsBtnHtml += `<button class="edit-msg-btn" data-id="${msg.id}" data-text="${escapeHtml(msg.text)}" style="color:#3b82f6;">تعديل</button>`;
+          optionsBtnHtml += `<button class="delete-msg-btn" data-id="${msg.id}" style="color:#ef4444;">حذف</button>`;
+        } else if (currentUser.isAdmin) {
+          optionsBtnHtml += `<button class="delete-msg-btn" data-id="${msg.id}" style="color:#ef4444;">حذف</button>`;
         }
+        optionsBtnHtml += `</div></div>`;
 
         div.innerHTML = `
           <img class="message-avatar" src="${msg.avatar || DEFAULT_AVATAR}" data-sender="${escapeHtml(msg.sender)}" data-device="${msg.senderDeviceId || ''}" />
           <div class="message-content-box">
             <div class="message-sender-name" data-sender="${escapeHtml(msg.sender)}" data-device="${msg.senderDeviceId || ''}">${escapeHtml(msg.sender)} ${getVerifiedBadgeHtml(msg.isNitro)}</div>
-            <div style="display:flex; align-items:center; gap:4px;">
-              ${bodyContent}
-              ${optionsBtnHtml}
-            </div>
+            <div style="display:flex; align-items:center; gap:4px;">${bodyContent}${optionsBtnHtml}</div>
           </div>
         `;
 
+        // أحداث أزرار الرسالة
         const senderElem = div.querySelector('.message-sender-name');
         const avatarElem = div.querySelector('.message-avatar');
         const openProf = () => openUserProfileModal(msg.sender, msg.senderDeviceId, msg.avatar);
-        if (senderElem) senderElem.onclick = openProf;
-        if (avatarElem) avatarElem.onclick = openProf;
+        if (senderElem) senderElem.onclick = openProf; if (avatarElem) avatarElem.onclick = openProf;
 
         const optBtn = div.querySelector('.msg-options-btn');
-        if (optBtn) {
-          optBtn.onclick = (e) => {
-            e.stopPropagation();
-            div.querySelector('.msg-dropdown').classList.toggle('hidden');
-          };
-        }
+        if (optBtn) optBtn.onclick = (e) => { e.stopPropagation(); document.querySelectorAll('.msg-dropdown').forEach(d => { if (d !== div.querySelector('.msg-dropdown')) d.classList.add('hidden'); }); div.querySelector('.msg-dropdown').classList.toggle('hidden'); };
 
         const delBtn = div.querySelector('.delete-msg-btn');
-        if (delBtn) {
-          delBtn.onclick = async () => {
-            if (confirm("حذف هذه الرسالة؟")) await deleteDoc(doc(db, "messages", delBtn.dataset.id));
-          };
-        }
+        if (delBtn) delBtn.onclick = async () => { if (confirm("حذف هذه الرسالة؟")) await deleteDoc(doc(db, "messages", delBtn.dataset.id)); };
+
+        const repBtn = div.querySelector('.reply-msg-btn');
+        if (repBtn) repBtn.onclick = () => {
+          replyingToMsg = { id: repBtn.dataset.id, sender: repBtn.dataset.sender, text: repBtn.dataset.text };
+          editingMsgId = null; actionPreviewTitle.innerText = "جاري الرد على " + replyingToMsg.sender; actionPreviewTitle.style.color = 'var(--accent-color)';
+          actionPreviewText.innerText = replyingToMsg.text; actionPreviewBox.classList.remove('hidden');
+          messageInput.focus(); sendBtn.innerText = 'إرسال'; div.querySelector('.msg-dropdown').classList.add('hidden');
+        };
+
+        const edtBtn = div.querySelector('.edit-msg-btn');
+        if (edtBtn) edtBtn.onclick = () => {
+          editingMsgId = edtBtn.dataset.id; replyingToMsg = null;
+          actionPreviewTitle.innerText = "تعديل الرسالة"; actionPreviewTitle.style.color = '#3b82f6';
+          actionPreviewText.innerText = edtBtn.dataset.text; actionPreviewBox.classList.remove('hidden');
+          messageInput.value = edtBtn.dataset.text; messageInput.focus(); sendBtn.innerText = 'تحديث'; div.querySelector('.msg-dropdown').classList.add('hidden');
+        };
 
         messagesContainer.appendChild(div);
       });
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
+
+    document.addEventListener('click', (e) => {
+      if(!e.target.classList.contains('msg-options-btn')) {
+        document.querySelectorAll('.msg-dropdown').forEach(d => d.classList.add('hidden'));
+      }
+    });
 
     // عرض ملف العضو
     const viewProfileModal = document.getElementById('view-profile-modal');
@@ -1434,80 +1311,62 @@
 
     function openUserProfileModal(name, targetDeviceId, avatar) {
       activeProfileUser = { name, deviceId: targetDeviceId };
-      viewProfileName.innerText = name;
-      viewProfileAvatar.src = avatar || DEFAULT_AVATAR;
-
-      if (currentUser.isAdmin) {
-        adminFenSection.classList.remove('hidden');
-        banDeviceBtn.classList.remove('hidden');
-      } else {
-        adminFenSection.classList.add('hidden');
-        banDeviceBtn.classList.add('hidden');
-      }
-
-      viewProfileModal.classList.remove('hidden');
-      modalOverlay.classList.add('active');
+      viewProfileName.innerText = name; viewProfileAvatar.src = avatar || DEFAULT_AVATAR;
+      if (currentUser.isAdmin && name !== currentUser.name) { adminFenSection.classList.remove('hidden'); banDeviceBtn.classList.remove('hidden'); } else { adminFenSection.classList.add('hidden'); banDeviceBtn.classList.add('hidden'); }
+      viewProfileModal.classList.remove('hidden'); modalOverlay.classList.add('active');
     }
 
     closeProfileModalBtn.onclick = () => {
       viewProfileModal.classList.add('hidden');
-      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+      if (!document.body.classList.contains('desktop-mode-active') && !sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
     };
 
     sendFenBtn.onclick = async () => {
       const amt = parseInt(fenSendAmount.value);
       if (!amt || amt <= 0) return alert("أدخل عدداً صحيحاً للعملات!");
-
-      await setDoc(doc(db, "users_data", activeProfileUser.name), {
-        fenBalance: increment(amt)
-      }, { merge: true });
-
-      alert(`تم إرسال ${amt} FEN إلى ${activeProfileUser.name} بنجاح!`);
-      fenSendAmount.value = '';
+      await setDoc(doc(db, "users_data", activeProfileUser.name), { fenBalance: increment(amt) }, { merge: true });
+      alert(`تم إرسال ${amt} FEN بنجاح!`); fenSendAmount.value = '';
     };
 
     banDeviceBtn.onclick = async () => {
-      if (!activeProfileUser.deviceId) return alert("لا يوجد معرف جهاز له؛ لا يمكن حظره.");
-
-      if (confirm(`هل أنت تأكد من حظر جهاز ${activeProfileUser.name} وحذف كافة رسائله نهائياً؟`)) {
-        await banUserDeviceAndMessages(activeProfileUser.name, activeProfileUser.deviceId);
-        viewProfileModal.classList.add('hidden');
-        if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+      if (!activeProfileUser.deviceId) return alert("لا يوجد معرف جهاز.");
+      if (confirm(`حظر جهاز ${activeProfileUser.name} وحذف رسائله؟`)) {
+        await setDoc(doc(db, "banned_devices", activeProfileUser.deviceId), { bannedAt: Date.now(), user: activeProfileUser.name });
+        const q1 = query(collection(db, "messages"), where("senderDeviceId", "==", activeProfileUser.deviceId));
+        const q2 = query(collection(db, "messages"), where("sender", "==", activeProfileUser.name));
+        const [snap1, snap2] = await Promise.all([getDocs(q1), getDocs(q2)]);
+        const deletePromises = [];
+        snap1.forEach(d => deletePromises.push(deleteDoc(doc(db, "messages", d.id))));
+        snap2.forEach(d => deletePromises.push(deleteDoc(doc(db, "messages", d.id))));
+        await Promise.all(deletePromises);
+        alert(`تم الحظر بنجاح!`); viewProfileModal.classList.add('hidden');
+        if (!document.body.classList.contains('desktop-mode-active')) modalOverlay.classList.remove('active');
       }
     };
 
     // القائمة الجانبية
     openSidebarBtn.onclick = () => {
+      if (document.body.classList.contains('desktop-mode-active')) return;
       editUsernameInput.value = currentUser.name;
       document.getElementById('edit-avatar-preview').src = currentUser.avatar || DEFAULT_AVATAR;
-      sidebar.classList.add('open');
-      modalOverlay.classList.add('active');
+      sidebar.classList.add('open'); modalOverlay.classList.add('active');
     };
 
     closeSidebarBtn.onclick = () => {
-      sidebar.classList.remove('open');
-      modalOverlay.classList.remove('active');
+      sidebar.classList.remove('open'); modalOverlay.classList.remove('active');
     };
 
     modalOverlay.onclick = () => {
-      sidebar.classList.remove('open');
-      cropperModal.classList.add('hidden');
-      gifModal.classList.add('hidden');
-      htmlEditorModal.classList.add('hidden');
-      viewProfileModal.classList.add('hidden');
-      membersModal.classList.add('hidden');
-      modalOverlay.classList.remove('active');
+      if (!document.body.classList.contains('desktop-mode-active')) sidebar.classList.remove('open');
+      cropperModal.classList.add('hidden'); gifModal.classList.add('hidden');
+      htmlEditorModal.classList.add('hidden'); viewProfileModal.classList.add('hidden'); membersModal.classList.add('hidden');
+      if (!document.body.classList.contains('desktop-mode-active')) modalOverlay.classList.remove('active');
     };
 
-    logoutBtn.onclick = () => {
-      localStorage.removeItem('fleed_studio_user');
-      location.reload();
-    };
+    logoutBtn.onclick = () => { localStorage.removeItem('fleed_studio_user'); localStorage.removeItem('fleed_device_preference'); location.reload(); };
 
     function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.innerText = text;
-      return div.innerHTML;
+      const div = document.createElement('div'); div.innerText = text; return div.innerHTML;
     }
   </script>
 </body>
