@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>استوديو فليد - Fleed Studio</title>
+  
+  <!-- مكتبة قص وتعديل الصور Cropper.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-sidebar: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --border-color: #e2e8f0;
+      --accent-color: #2563eb;
+      --bg-msg-mine: #2563eb;
+      --text-msg-mine: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.05);
+    }
+
+    body.dark-mode {
+      --bg-main: #000000;
+      --bg-card: #0a0a0a;
+      --bg-sidebar: #0a0a0a;
+      --text-primary: #f8fafc;
+      --text-secondary: #a1a1aa;
+      --border-color: #27272a;
+      --accent-color: #3b82f6;
+      --bg-msg-mine: #2563eb;
+      --text-msg-mine: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.8);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    html, body {
+      height: 100%; width: 100%;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+
+    .hidden { display: none !important; }
+
+    /* علامة التوثيق */
+    .verified-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 15px; height: 15px; background: #2563eb; color: #ffffff;
+      border-radius: 50%; font-size: 10px; margin: 0 4px; vertical-align: middle; font-weight: bold;
+    }
+    .verified-badge::after { content: '✓'; }
+
+    /* المنشن */
+    .mention-tag {
+      background-color: #dbeafe; color: #1d4ed8;
+      padding: 2px 6px; border-radius: 6px; font-weight: bold;
+    }
+    body.dark-mode .mention-tag {
+      background-color: rgba(59, 130, 246, 0.25); color: #93c5fd;
+    }
+
+    /* بطاقة النيترو والعملات */
+    .nitro-card {
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      color: #fff; padding: 16px; border-radius: 18px; text-align: center;
+      display: flex; flex-direction: column; gap: 10px;
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.3);
+    }
+
+    .fen-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+      color: #1c1300; padding: 6px 14px; border-radius: 25px;
+      font-weight: 800; font-size: 13px;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+      border: 1px solid #ffe57f; position: relative; overflow: hidden;
+    }
+
+    .fen-coin-icon {
+      width: 20px; height: 20px; background: radial-gradient(circle, #fff7ad 0%, #ffa000 100%);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 900; color: #4a2f00; border: 1.5px solid #ffffff;
+    }
+
+    .wallet-card {
+      background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(180, 130, 20, 0.05));
+      border: 1.5px solid rgba(212, 175, 55, 0.4);
+      border-radius: 18px; padding: 18px; text-align: center;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    /* الشاشات النوافذ */
+    .full-screen-center {
+      display: flex; justify-content: center; align-items: center;
+      width: 100vw; height: 100vh; background: var(--bg-main);
+      position: fixed; top: 0; left: 0; z-index: 2000;
+    }
+
+    .card-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px; padding: 25px; width: 100%; max-width: 400px;
+      box-shadow: 0 15px 35px var(--shadow-color);
+      display: flex; flex-direction: column; gap: 12px; text-align: center;
+    }
+
+    .avatar-preview {
+      width: 85px; height: 85px; border-radius: 50%;
+      object-fit: cover; border: 3px solid var(--accent-color); margin: 0 auto;
+    }
+
+    .file-input-btn {
+      position: relative; overflow: hidden; display: inline-block;
+      background: var(--bg-main); color: var(--text-primary);
+      padding: 8px 14px; border-radius: 8px; cursor: pointer;
+      font-size: 12px; border: 1px solid var(--border-color); font-weight: 600;
+    }
+
+    .file-input-btn input[type="file"] {
+      position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+
+    /* زر إرفاق الملفات المصمم والمكبر */
+    .large-file-btn {
+      position: relative;
+      overflow: hidden;
+      background: var(--bg-main);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .large-file-btn input[type="file"] {
+      position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+
+    input[type="text"], input[type="password"], input[type="number"], textarea, select {
+      padding: 10px; background: var(--bg-main);
+      border: 1px solid var(--border-color); border-radius: 10px;
+      color: var(--text-primary); outline: none; font-size: 13px; width: 100%;
+    }
+
+    .primary-btn {
+      padding: 10px 14px; background-color: var(--accent-color);
+      color: #fff; border: none; border-radius: 10px;
+      cursor: pointer; font-weight: bold; font-size: 13px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .primary-btn:disabled, .icon-btn:disabled, button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* الهيكل الرئيسي */
+    .app-layout { display: flex; flex-direction: column; width: 100vw; height: 100vh; }
+
+    .top-bar {
+      height: 60px; background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 15px; flex-shrink: 0;
+    }
+
+    .user-profile-summary { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .header-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-color); }
+    .user-name-text { font-size: 15px; font-weight: 700; display: flex; align-items: center; }
+    .admin-badge { background: #ef4444; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-right: 4px; }
+
+    .icon-btn {
+      background: var(--bg-main); color: var(--text-primary);
+      border: 1px solid var(--border-color); padding: 8px 14px;
+      border-radius: 10px; cursor: pointer; font-size: 13px;
+      display: flex; align-items: center; gap: 6px; font-weight: bold;
+    }
+
+    /* المحادثة */
+    .chat-main-area {
+      flex: 1; display: flex; flex-direction: column;
+      width: 100%; height: calc(100vh - 125px);
+      padding: 10px; gap: 8px; position: relative;
+    }
+
+    .messages-wrapper {
+      flex: 1; overflow-y: auto; padding: 15px;
+      display: flex; flex-direction: column; gap: 12px;
+      border-radius: 14px; border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px var(--shadow-color);
+      background-color: var(--bg-main);
+    }
+
+    .message-item { display: flex; gap: 10px; align-items: flex-end; max-width: 85%; position: relative; }
+    .message-item.mine { align-self: flex-end; flex-direction: row-reverse; }
+    .message-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; cursor: pointer; }
+    .message-content-box { display: flex; flex-direction: column; position: relative; }
+    .message-sender-name { font-size: 11px; color: var(--text-secondary); margin-bottom: 2px; font-weight: 600; cursor: pointer; display: flex; align-items: center; }
+    
+    .message-bubble {
+      background: var(--bg-card); color: var(--text-primary);
+      padding: 10px 14px; border-radius: 12px; font-size: 14px;
+      box-shadow: 0 2px 6px var(--shadow-color); border: 1px solid var(--border-color);
+      word-break: break-word; line-height: 1.5;
+    }
+    .message-item.mine .message-bubble {
+      background: var(--bg-msg-mine); color: var(--text-msg-mine); border: none;
+    }
+
+    /* بطاقة تطبيق/لعبة HTML */
+    .html-app-card {
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      color: #fff; padding: 12px 16px; border-radius: 12px;
+      cursor: pointer; display: flex; flex-direction: column; gap: 6px;
+      box-shadow: 0 4px 15px rgba(49, 46, 129, 0.4); text-align: center;
+      border: 1px solid #4338ca; transition: transform 0.2s;
+    }
+    .html-app-card:hover { transform: scale(1.02); }
+
+    /* القائمة الفرعية لزر + */
+    .plus-menu {
+      position: absolute; bottom: 60px; right: 15px;
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: 14px; box-shadow: 0 10px 25px var(--shadow-color);
+      display: flex; flex-direction: column; gap: 6px; padding: 8px; z-index: 100;
+    }
+    .plus-menu button {
+      background: var(--bg-main); border: 1px solid var(--border-color);
+      padding: 10px 16px; border-radius: 10px; cursor: pointer;
+      color: var(--text-primary); font-weight: bold; font-size: 13px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .bottom-input-bar {
+      display: flex; gap: 6px; background: var(--bg-card);
+      padding: 8px; border-radius: 12px; border: 1px solid var(--border-color); align-items: center;
+    }
+
+    .bottom-nav-bar {
+      height: 65px; background: var(--bg-card);
+      border-top: 1px solid var(--border-color);
+      display: flex; justify-space-around; align-items: center; flex-shrink: 0; z-index: 10;
+    }
+
+    .nav-tab {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 12px; font-weight: 600; width: 20%;
+    }
+    .nav-tab.active { color: var(--accent-color); font-weight: bold; }
+
+    /* النوافذ العائمة */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 998; display: none; }
+    .modal-overlay.active { display: block; }
+
+    .sidebar-drawer {
+      position: fixed; top: 0; right: -340px; width: 320px; height: 100%;
+      background: var(--bg-sidebar); border-left: 1px solid var(--border-color);
+      z-index: 999; padding: 20px; display: flex; flex-direction: column; gap: 12px;
+      transition: right 0.3s ease; overflow-y: auto;
+    }
+    .sidebar-drawer.open { right: 0; }
+
+    .center-modal {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: 20px; padding: 20px; width: 92%; max-width: 420px;
+      z-index: 2500; text-align: center; display: flex; flex-direction: column; gap: 12px;
+      box-shadow: 0 10px 30px var(--shadow-color);
+    }
+
+    /* قسم الرسم */
+    .drawing-full-screen {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: var(--bg-main); z-index: 4000; display: flex; flex-direction: column;
+    }
+    .drawing-header {
+      height: 55px; background: var(--bg-card); border-bottom: 1px solid var(--border-color);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
+    }
+    .drawing-tools-bar {
+      background: var(--bg-card); padding: 8px 15px; border-bottom: 1px solid var(--border-color);
+      display: flex; gap: 10px; align-items: center; overflow-x: auto; flex-shrink: 0;
+    }
+    .drawing-canvas-area {
+      flex: 1; overflow: hidden; display: flex; justify-content: center; align-items: center;
+      position: relative; background: #64748b; touch-action: none;
+    }
+    .drawing-paper-wrapper {
+      position: relative; width: 350px; height: 450px; background: #ffffff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-radius: 12px; transform-origin: center center;
+    }
+    .drawing-layer-canvas {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px;
+    }
+
+    .msg-dropdown {
+      position: absolute; top: 100%; right: 0; background: var(--bg-card);
+      border: 1px solid var(--border-color); border-radius: 10px;
+      box-shadow: 0 6px 18px var(--shadow-color); z-index: 100;
+      display: flex; flex-direction: column; min-width: 90px; overflow: hidden;
+    }
+    .msg-dropdown button {
+      background: none; border: none; padding: 10px;
+      text-align: right; font-size: 12px; cursor: pointer; color: var(--text-primary); font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- شاشة الحظر -->
+  <div id="banned-screen" class="full-screen-center hidden" style="z-index: 9999; background: #000;">
+    <div class="card-box" style="border-color: #ef4444;">
+      <h2 style="color:#ef4444;">تم حظر جهازك</h2>
+      <p style="font-size:13px; color:#a1a1aa;">لقد تم حظر جهازك وحذف جميع رسائلك من قبل إدارة التطبيق.</p>
+    </div>
+  </div>
+
+  <!-- شاشة الدخول -->
+  <div id="login-screen" class="full-screen-center">
+    <div class="card-box">
+      <h2>استوديو فليد</h2>
+      <p style="font-size: 12px; color: var(--text-secondary);">سجل دخولك أو أنشئ حسابك للانضمام</p>
+
+      <img id="login-avatar-preview" class="avatar-preview" src="" alt="Avatar" />
+      <label class="file-input-btn">
+        اختر صورة شخصية
+        <input type="file" id="login-avatar-file" accept="image/*" />
+      </label>
+
+      <input type="text" id="username-input" placeholder="اسم المستخدم..." />
+      <input type="password" id="password-input" placeholder="كلمة المرور..." />
+      <button id="join-btn" class="primary-btn">الدخول للتطبيق</button>
+    </div>
+  </div>
+
+  <!-- خلفية النوافذ العائمة -->
+  <div id="modal-overlay" class="modal-overlay"></div>
+
+  <!-- نافذة قص الأفتار -->
+  <div id="cropper-modal" class="center-modal hidden" style="z-index: 3000;">
+    <h3>تعديل وتقطير الصورة الشخصية</h3>
+    <div style="width: 100%; max-height: 280px; overflow: hidden; background: #000; border-radius: 10px;">
+      <img id="cropper-target-img" style="max-width: 100%; display: block;" />
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button id="crop-save-btn" class="primary-btn" style="flex:1;">قص وحفظ</button>
+      <button id="crop-cancel-btn" class="icon-btn" style="flex:1; justify-content:center;">إلغاء</button>
+    </div>
+  </div>
+
+  <!-- نافذة البحث في GIF -->
+  <div id="gif-modal" class="center-modal hidden">
+    <h3>البحث عن صور GIF</h3>
+    <input type="text" id="gif-search-input" placeholder="اكتب للبحث عن GIF..." />
+    <div id="gif-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 250px; overflow-y: auto;"></div>
+    <button id="close-gif-modal-btn" class="icon-btn" style="justify-content:center;">إغلاق</button>
+  </div>
+
+  <!-- قسم الرسم -->
+  <div id="drawing-section" class="drawing-full-screen hidden">
+    <div class="drawing-header">
+      <button id="close-drawing-btn" class="icon-btn">إلغاء</button>
+      <h4 style="font-weight: bold;">محرر الرسم والطبقات</h4>
+      <button id="send-drawing-btn" class="primary-btn">إرسال الرسمة</button>
+    </div>
+
+    <div class="drawing-tools-bar">
+      <input type="color" id="brush-color" value="#000000" style="width:30px; height:30px; cursor:pointer;" title="لون الفرشاة" />
+      <input type="range" id="brush-size" min="1" max="40" value="5" style="width:80px;" title="حجم الفرشاة" />
+      <button id="add-layer-btn" class="icon-btn">+ طبقة جديدة</button>
+      <select id="layer-select" class="icon-btn" style="padding:4px;"></select>
+      <button id="zoom-in-btn" class="icon-btn">تكبير</button>
+      <button id="zoom-out-btn" class="icon-btn">تصغير</button>
+      <button id="zoom-reset-btn" class="icon-btn">إعادة الضبط</button>
+      <button id="clear-canvas-btn" class="icon-btn" style="color:#ef4444;">مسح الطبقة</button>
+    </div>
+
+    <div class="drawing-canvas-area">
+      <div id="drawing-paper" class="drawing-paper-wrapper"></div>
+    </div>
+  </div>
+
+  <!-- قسم محرر كود HTML -->
+  <div id="html-editor-modal" class="center-modal hidden" style="max-width: 500px;">
+    <h3>محرر كود HTML / JS / CSS</h3>
+    <p style="font-size:11px; color:var(--text-secondary);">اكتب كود اللعبة أو التطبيق التفاعلي هنا ليتم تشغيله بالكامل بملء الشاشة عند الضغط عليه.</p>
+    <textarea id="html-code-input" rows="10" placeholder="<html>
+<head>
+  <style> body { background: #000; color: #fff; text-align: center; padding-top: 50px; font-family: sans-serif; } </style>
+</head>
+<body>
+  <h1>أهلاً بك في تطبيقي!</h1>
+  <button onclick='alert(&quot;يعمل بنجاح!&quot;)'>اضغط هنا</button>
+</body>
+</html>"></textarea>
+    <div style="display:flex; gap:10px;">
+      <button id="send-html-btn" class="primary-btn" style="flex:1;">إرسال للدردشة</button>
+      <button id="close-html-editor-btn" class="icon-btn" style="flex:1; justify-content:center;">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- مشغل تطبيق HTML -->
+  <div id="html-runner-modal" class="full-screen-center hidden" style="z-index: 5000; background:#000; flex-direction:column;">
+    <div style="width:100%; height:45px; background:#111; display:flex; justify-content:space-between; align-items:center; padding:0 15px; color:#fff;">
+      <span>تشغيل التطبيق التفاعلي</span>
+      <button id="close-html-runner-btn" class="icon-btn" style="background:#ef4444; color:#fff; border:none;">إغلاق X</button>
+    </div>
+    <iframe id="html-runner-frame" style="width:100%; height:calc(100vh - 45px); border:none; background:#fff;"></iframe>
+  </div>
+
+  <!-- القائمة الجانبية -->
+  <div id="sidebar" class="sidebar-drawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+      <h3 id="sidebar-user-title">المستخدم</h3>
+      <button id="close-sidebar-btn" style="background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:18px;">X</button>
+    </div>
+
+    <img id="edit-avatar-preview" class="avatar-preview" src="" alt="Avatar" />
+    <label class="file-input-btn" style="text-align: center;">
+      تعديل وتقطير الصورة
+      <input type="file" id="edit-avatar-file" accept="image/*" />
+    </label>
+
+    <div class="wallet-card">
+      <span style="font-size: 12px; font-weight: bold; color: #b38728;">محفظتي الذهبية</span>
+      <div class="fen-badge" style="margin: 0 auto;">
+        <div class="fen-coin-icon">F</div>
+        <span id="drawer-fen-balance">0</span> FEN
+      </div>
+    </div>
+
+    <div class="nitro-card">
+      <div style="font-weight: bold; font-size: 14px;">اشتراك نيترو المميز</div>
+      <div id="nitro-status-text" style="font-size: 11px;">تخصيص كامل لألوان وخلفيات جميع الأقسام!</div>
+      <button id="buy-nitro-btn" class="primary-btn" style="background: #ffffff; color: #8b5cf6;">
+        تفعيل نيترو (100 FEN)
+      </button>
+    </div>
+
+    <!-- إعدادات تخصيص النيترو -->
+    <div id="nitro-settings-box" class="card-box hidden" style="padding: 12px; text-align:right;">
+      <h4 style="font-size: 12px; text-align: center;">تخصيص ألوان وخلفيات التطبيق (نيترو)</h4>
+      
+      <label style="font-size: 11px;">اللون الأساسي:</label>
+      <input type="color" id="custom-accent-color" value="#2563eb" style="height:30px; cursor:pointer;" />
+
+      <label style="font-size: 11px;">خلفية التطبيق العامة:</label>
+      <input type="color" id="custom-bg-main-color" value="#f8fafc" style="height:30px; cursor:pointer;" />
+
+      <label style="font-size: 11px;">خلفية البطاقات والقوائم:</label>
+      <input type="color" id="custom-bg-card-color" value="#ffffff" style="height:30px; cursor:pointer;" />
+
+      <label style="font-size: 11px;">لون النصوص الأساسي:</label>
+      <input type="color" id="custom-text-color" value="#0f172a" style="height:30px; cursor:pointer;" />
+
+      <hr style="border-color: var(--border-color); margin: 6px 0;" />
+
+      <label style="font-size: 11px;">خلفية قسم المحادثة:</label>
+      <select id="bg-section-selector">
+        <option value="news">الأخبار</option>
+        <option value="devs">مبرمجين</option>
+        <option value="artists">رسامين</option>
+        <option value="designers">مصممين</option>
+        <option value="dubbers">مدبلجين</option>
+      </select>
+      <label class="file-input-btn" style="width:100%; text-align:center; margin-top:4px;">
+        رفع صورة خلفية للقسم المحدد
+        <input type="file" id="custom-section-bg-input" accept="image/*" />
+      </label>
+    </div>
+
+    <label style="font-size: 11px; color: var(--text-secondary);">تعديل الاسم:</label>
+    <input type="text" id="edit-username-input" />
+
+    <div style="border-top:1px solid var(--border-color); padding-top:10px; margin-top:5px;">
+      <button id="clear-cache-btn" class="primary-btn" style="background:#ef4444; width:100%; font-size:12px;">
+        حذف الرسائل المؤقتة من الجهاز
+      </button>
+    </div>
+
+    <button id="logout-btn" class="icon-btn" style="border-color:#ef4444; color:#ef4444; justify-content:center; margin-top:auto;">تسجيل الخروج</button>
+  </div>
+
+  <!-- عرض ملف عضو -->
+  <div id="view-profile-modal" class="center-modal hidden">
+    <img id="view-profile-avatar" class="avatar-preview" src="" alt="User Avatar" />
+    <h3 id="view-profile-name" style="display:flex; align-items:center; justify-content:center;">اسم المستخدم</h3>
+    
+    <div id="admin-fen-section" class="wallet-card hidden">
+      <span style="font-size:11px; font-weight:bold; color:#b38728;">إرسال عملات FEN للعضو</span>
+      <input type="number" id="fen-send-amount" placeholder="عدد العملات..." style="text-align:center;" />
+      <button id="send-fen-btn" class="primary-btn" style="background: linear-gradient(135deg, #bf953f, #b38728); color:#fff;">إرسال العملات</button>
+    </div>
+
+    <button id="ban-device-btn" class="primary-btn hidden" style="background:#ef4444; font-size:12px;">حظر هذا الجهاز وحذف رسائله</button>
+    <button id="close-profile-modal-btn" class="icon-btn" style="justify-content:center;">إغلاق</button>
+  </div>
+
+  <!-- الشاشة الرئيسية -->
+  <div id="chat-screen" class="app-layout hidden">
+    <div class="top-bar">
+      <div id="open-sidebar-btn" class="user-profile-summary">
+        <img id="header-avatar-img" class="header-avatar" src="" alt="Avatar" />
+        <div>
+          <span id="user-display" class="user-name-text"></span>
+          <span id="admin-badge" class="admin-badge hidden">مسؤول</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-main-area">
+      <div id="messages-container" class="messages-wrapper"></div>
+
+      <!-- القائمة المنبثقة لزر + -->
+      <div id="plus-menu" class="plus-menu hidden">
+        <button id="open-drawing-option">رسم</button>
+        <button id="open-html-option">HTML</button>
+      </div>
+
+      <!-- نموذج الإرسال -->
+      <form id="message-form" class="bottom-input-bar">
+        <button type="button" id="plus-btn" class="icon-btn" style="font-size: 16px; font-weight: bold; color: var(--accent-color);">+</button>
+
+        <!-- زر إرفاق الملفات المكبر والخالي من الإيموجي -->
+        <label class="large-file-btn" id="media-file-label" title="إرفاق ملف">
+          إرفاق ملف
+          <input type="file" id="media-file-input" accept="image/*,video/*,audio/*" style="display:none;" />
+        </label>
+
+        <button type="button" id="gif-btn" class="icon-btn" style="font-weight: bold; color: var(--accent-color);">GIF</button>
+
+        <input type="text" id="message-input" placeholder="اكتب رسالتك..." autocomplete="off" style="flex:1;" />
+        <button type="submit" id="send-btn" class="primary-btn">إرسال</button>
+      </form>
+    </div>
+
+    <!-- الشريط السفلي للأقسام -->
+    <div class="bottom-nav-bar">
+      <button class="nav-tab" data-section="devs">مبرمجين</button>
+      <button class="nav-tab" data-section="artists">رسامين</button>
+      <button class="nav-tab active" data-section="news">الأخبار</button>
+      <button class="nav-tab" data-section="designers">مصممين</button>
+      <button class="nav-tab" data-section="dubbers">مدبلجين</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { initializeFirestore, collection, addDoc, onSnapshot, query, where, doc, setDoc, deleteDoc, updateDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA6_sO1yDC3PHdsU37sbJeyf2l-tns72Qs",
+      authDomain: "fleed-43661.firebaseapp.com",
+      projectId: "fleed-43661",
+      storageBucket: "fleed-43661.firebasestorage.app",
+      messagingSenderId: "537131629542",
+      appId: "1:537131629542:web:b322e7690f34a98672b427"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+
+    let deviceId = localStorage.getItem('fleed_device_id') || ('device_' + Math.random().toString(36).substring(2, 9));
+    localStorage.setItem('fleed_device_id', deviceId);
+
+    const ADMIN_SECRET = "F0_500";
+    let currentUser = JSON.parse(localStorage.getItem('fleed_studio_user')) || null;
+    let currentSection = 'news';
+    let tempAvatar = DEFAULT_AVATAR;
+    let unsubscribeMessages = null;
+    let activeProfileUser = null;
+
+    // عناصر الصفحة
+    const loginScreen = document.getElementById('login-screen');
+    const bannedScreen = document.getElementById('banned-screen');
+    const chatScreen = document.getElementById('chat-screen');
+    const usernameInput = document.getElementById('username-input');
+    const passwordInput = document.getElementById('password-input');
+    const joinBtn = document.getElementById('join-btn');
+    const userDisplay = document.getElementById('user-display');
+    const adminBadge = document.getElementById('admin-badge');
+    const headerAvatarImg = document.getElementById('header-avatar-img');
+    const messagesContainer = document.getElementById('messages-container');
+    const messageForm = document.getElementById('message-form');
+    const messageInput = document.getElementById('message-input');
+
+    const drawerFenBalance = document.getElementById('drawer-fen-balance');
+    const buyNitroBtn = document.getElementById('buy-nitro-btn');
+    const nitroStatusText = document.getElementById('nitro-status-text');
+    const nitroSettingsBox = document.getElementById('nitro-settings-box');
+
+    const sidebar = document.getElementById('sidebar');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const openSidebarBtn = document.getElementById('open-sidebar-btn');
+    const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+    const sidebarUserTitle = document.getElementById('sidebar-user-title');
+    const editUsernameInput = document.getElementById('edit-username-input');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // فحص حظر الجهاز
+    onSnapshot(doc(db, "banned_devices", deviceId), (docSnap) => {
+      if (docSnap.exists()) {
+        bannedScreen.classList.remove('hidden');
+        chatScreen.classList.add('hidden');
+        loginScreen.classList.add('hidden');
+      }
+    });
+
+    // زر + والقائمة الفرعية
+    const plusBtn = document.getElementById('plus-btn');
+    const plusMenu = document.getElementById('plus-menu');
+    plusBtn.onclick = (e) => {
+      e.stopPropagation();
+      plusMenu.classList.toggle('hidden');
+    };
+    document.addEventListener('click', () => plusMenu.classList.add('hidden'));
+
+    // البحث في GIF
+    const gifBtn = document.getElementById('gif-btn');
+    const gifModal = document.getElementById('gif-modal');
+    const gifGrid = document.getElementById('gif-grid');
+    const gifSearchInput = document.getElementById('gif-search-input');
+    const GIPHY_API_KEY = "GlV1332yA39622gWSPGl30P3v3R32s8R";
+
+    gifBtn.onclick = () => {
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
+        return alert("قسم الأخبار مخصص للمسؤولين فقط.");
+      }
+      gifModal.classList.remove('hidden');
+      modalOverlay.classList.add('active');
+      fetchGifs('trending');
+    };
+
+    gifSearchInput.addEventListener('input', (e) => {
+      const q = e.target.value.trim();
+      if (q) fetchGifs('search', q);
+      else fetchGifs('trending');
+    });
+
+    async function fetchGifs(type, query = '') {
+      gifGrid.innerHTML = '<div style="grid-column: span 2; text-align:center;">جاري التحميل...</div>';
+      try {
+        const url = type === 'search' 
+          ? `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(query)}&limit=12`
+          : `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=12`;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+        gifGrid.innerHTML = '';
+        if (data.data && data.data.length > 0) {
+          data.data.forEach(item => {
+            const imgUrl = item.images.fixed_height.url;
+            const img = document.createElement('img');
+            img.src = imgUrl;
+            img.style.cssText = "width:100%; height:95px; object-fit:cover; border-radius:8px; cursor:pointer;";
+            img.onclick = () => sendGif(imgUrl);
+            gifGrid.appendChild(img);
+          });
+        } else {
+          gifGrid.innerHTML = '<div style="grid-column: span 2; text-align:center;">لم يتم العثور على نتائج.</div>';
+        }
+      } catch (err) {
+        gifGrid.innerHTML = '<div style="grid-column: span 2; text-align:center;">حدث خطأ أثناء الاتصال.</div>';
+      }
+    }
+
+    document.getElementById('close-gif-modal-btn').onclick = () => {
+      gifModal.classList.add('hidden');
+      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+    };
+
+    async function sendGif(url) {
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
+        return alert("قسم الأخبار مخصص للمسؤولين فقط.");
+      }
+      gifModal.classList.add('hidden');
+      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+
+      const msgData = {
+        section: currentSection,
+        sender: currentUser.name,
+        avatar: currentUser.avatar || DEFAULT_AVATAR,
+        senderDeviceId: deviceId,
+        text: '',
+        timestamp: Date.now(),
+        file: { data: url, type: 'image/gif', name: 'GIF' },
+        isNitro: Boolean(currentUser.isNitro)
+      };
+      await addDoc(collection(db, "messages"), msgData);
+    }
+
+    // قسم الرسم والطبقات
+    const openDrawingOption = document.getElementById('open-drawing-option');
+    const drawingSection = document.getElementById('drawing-section');
+    const closeDrawingBtn = document.getElementById('close-drawing-btn');
+    const sendDrawingBtn = document.getElementById('send-drawing-btn');
+    const drawingPaper = document.getElementById('drawing-paper');
+    const addLayerBtn = document.getElementById('add-layer-btn');
+    const layerSelect = document.getElementById('layer-select');
+    const brushColor = document.getElementById('brush-color');
+    const brushSize = document.getElementById('brush-size');
+    const clearCanvasBtn = document.getElementById('clear-canvas-btn');
+    const zoomInBtn = document.getElementById('zoom-in-btn');
+    const zoomOutBtn = document.getElementById('zoom-out-btn');
+    const zoomResetBtn = document.getElementById('zoom-reset-btn');
+
+    let layers = [];
+    let currentLayerIndex = 0;
+    let isDrawing = false;
+    let drawingZoom = 1;
+
+    openDrawingOption.onclick = () => {
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
+        return alert("قسم الأخبار مخصص للمسؤولين فقط.");
+      }
+      plusMenu.classList.add('hidden');
+      drawingSection.classList.remove('hidden');
+      if (layers.length === 0) createNewLayer();
+    };
+
+    closeDrawingBtn.onclick = () => drawingSection.classList.add('hidden');
+
+    function createNewLayer() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 350;
+      canvas.height = 450;
+      canvas.className = 'drawing-layer-canvas';
+      drawingPaper.appendChild(canvas);
+
+      const ctx = canvas.getContext('2d');
+      layers.push({ canvas, ctx });
+      currentLayerIndex = layers.length - 1;
+
+      updateLayerSelect();
+      setupDrawingEvents(canvas, ctx);
+    }
+
+    addLayerBtn.onclick = () => createNewLayer();
+
+    function updateLayerSelect() {
+      layerSelect.innerHTML = '';
+      layers.forEach((l, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.innerText = `طبقة ${idx + 1}`;
+        if (idx === currentLayerIndex) opt.selected = true;
+        layerSelect.appendChild(opt);
+      });
+    }
+
+    layerSelect.onchange = (e) => {
+      currentLayerIndex = parseInt(e.target.value);
+    };
+
+    function setupDrawingEvents(canvas, ctx) {
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) / drawingZoom,
+          y: (clientY - rect.top) / drawingZoom
+        };
+      }
+
+      function startDraw(e) {
+        isDrawing = true;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+      }
+
+      function draw(e) {
+        if (!isDrawing) return;
+        const pos = getPos(e);
+        ctx.strokeStyle = brushColor.value;
+        ctx.lineWidth = brushSize.value;
+        ctx.lineCap = 'round';
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      }
+
+      function stopDraw() { isDrawing = false; }
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDraw);
+      canvas.addEventListener('touchstart', startDraw);
+      canvas.addEventListener('touchmove', draw);
+      canvas.addEventListener('touchend', stopDraw);
+    }
+
+    clearCanvasBtn.onclick = () => {
+      if (layers[currentLayerIndex]) {
+        const c = layers[currentLayerIndex].canvas;
+        layers[currentLayerIndex].ctx.clearRect(0, 0, c.width, c.height);
+      }
+    };
+
+    zoomInBtn.onclick = () => { drawingZoom += 0.2; applyZoom(); };
+    zoomOutBtn.onclick = () => { if (drawingZoom > 0.4) drawingZoom -= 0.2; applyZoom(); };
+    zoomResetBtn.onclick = () => { drawingZoom = 1; applyZoom(); };
+
+    function applyZoom() {
+      drawingPaper.style.transform = `scale(${drawingZoom})`;
+    }
+
+    sendDrawingBtn.onclick = async () => {
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
+        return alert("قسم الأخبار مخصص للمسؤولين فقط.");
+      }
+      const mergedCanvas = document.createElement('canvas');
+      mergedCanvas.width = 350;
+      mergedCanvas.height = 450;
+      const mCtx = mergedCanvas.getContext('2d');
+      mCtx.fillStyle = "#ffffff";
+      mCtx.fillRect(0, 0, 350, 450);
+
+      layers.forEach(l => mCtx.drawImage(l.canvas, 0, 0));
+      const drawingDataUrl = mergedCanvas.toDataURL('image/png');
+
+      drawingSection.classList.add('hidden');
+
+      const msgData = {
+        section: currentSection,
+        sender: currentUser.name,
+        avatar: currentUser.avatar || DEFAULT_AVATAR,
+        senderDeviceId: deviceId,
+        text: 'رسمة مخصصة',
+        timestamp: Date.now(),
+        file: { data: drawingDataUrl, type: 'image/png', name: 'drawing.png' },
+        isNitro: Boolean(currentUser.isNitro)
+      };
+      await addDoc(collection(db, "messages"), msgData);
+    };
+
+    // قسم محرر HTML
+    const openHtmlOption = document.getElementById('open-html-option');
+    const htmlEditorModal = document.getElementById('html-editor-modal');
+    const closeHtmlEditorBtn = document.getElementById('close-html-editor-btn');
+    const sendHtmlBtn = document.getElementById('send-html-btn');
+    const htmlCodeInput = document.getElementById('html-code-input');
+
+    const htmlRunnerModal = document.getElementById('html-runner-modal');
+    const htmlRunnerFrame = document.getElementById('html-runner-frame');
+    const closeHtmlRunnerBtn = document.getElementById('close-html-runner-btn');
+
+    openHtmlOption.onclick = () => {
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
+        return alert("قسم الأخبار مخصص للمسؤولين فقط.");
+      }
+      plusMenu.classList.add('hidden');
+      htmlEditorModal.classList.remove('hidden');
+      modalOverlay.classList.add('active');
+    };
+
+    closeHtmlEditorBtn.onclick = () => {
+      htmlEditorModal.classList.add('hidden');
+      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+    };
+
+    sendHtmlBtn.onclick = async () => {
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
+        return alert("قسم الأخبار مخصص للمسؤولين فقط.");
+      }
+      const code = htmlCodeInput.value.trim();
+      if (!code) return alert("اكتب الكود أولاً!");
+
+      htmlEditorModal.classList.add('hidden');
+      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+
+      const msgData = {
+        section: currentSection,
+        sender: currentUser.name,
+        avatar: currentUser.avatar || DEFAULT_AVATAR,
+        senderDeviceId: deviceId,
+        text: '',
+        htmlAppCode: code,
+        timestamp: Date.now(),
+        isNitro: Boolean(currentUser.isNitro)
+      };
+      await addDoc(collection(db, "messages"), msgData);
+    };
+
+    window.runHtmlAppCode = (encodedCode) => {
+      const code = decodeURIComponent(encodedCode);
+      htmlRunnerFrame.srcdoc = code;
+      htmlRunnerModal.classList.remove('hidden');
+    };
+
+    closeHtmlRunnerBtn.onclick = () => {
+      htmlRunnerModal.classList.add('hidden');
+      htmlRunnerFrame.srcdoc = '';
+    };
+
+    // Cropper
+    let cropperInstance = null;
+    let cropTargetType = 'login';
+    const cropperModal = document.getElementById('cropper-modal');
+    const cropperTargetImg = document.getElementById('cropper-target-img');
+    const cropSaveBtn = document.getElementById('crop-save-btn');
+    const cropCancelBtn = document.getElementById('crop-cancel-btn');
+
+    function openCropper(imageSrc, targetType) {
+      cropTargetType = targetType;
+      cropperTargetImg.src = imageSrc;
+      cropperModal.classList.remove('hidden');
+      modalOverlay.classList.add('active');
+
+      if (cropperInstance) cropperInstance.destroy();
+      cropperInstance = new Cropper(cropperTargetImg, {
+        aspectRatio: 1, viewMode: 1, autoCropArea: 0.8
+      });
+    }
+
+    cropSaveBtn.onclick = () => {
+      if (!cropperInstance) return;
+      const canvas = cropperInstance.getCroppedCanvas({ width: 300, height: 300 });
+      const croppedBase64 = canvas.toDataURL('image/jpeg', 0.9);
+
+      if (cropTargetType === 'login') {
+        tempAvatar = croppedBase64;
+        document.getElementById('login-avatar-preview').src = croppedBase64;
+      } else {
+        currentUser.avatar = croppedBase64;
+        document.getElementById('edit-avatar-preview').src = croppedBase64;
+        headerAvatarImg.src = croppedBase64;
+        localStorage.setItem('fleed_studio_user', JSON.stringify(currentUser));
+      }
+      closeCropper();
+    };
+
+    function closeCropper() {
+      cropperModal.classList.add('hidden');
+      if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+    }
+    cropCancelBtn.onclick = closeCropper;
+
+    document.getElementById('login-avatar-file').addEventListener('change', (e) => {
+      if (e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (evt) => openCropper(evt.target.result, 'login');
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+
+    document.getElementById('edit-avatar-file').addEventListener('change', (e) => {
+      if (e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (evt) => openCropper(evt.target.result, 'edit');
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+
+    // إرفاق ملف عبر الزر الكبير
+    document.getElementById('media-file-input').addEventListener('change', async (e) => {
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
+        alert("قسم الأخبار مخصص للمسؤولين فقط.");
+        e.target.value = '';
+        return;
+      }
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        const msgData = {
+          section: currentSection,
+          sender: currentUser.name,
+          avatar: currentUser.avatar || DEFAULT_AVATAR,
+          senderDeviceId: deviceId,
+          text: '',
+          timestamp: Date.now(),
+          file: { data: evt.target.result, type: file.type, name: file.name },
+          isNitro: Boolean(currentUser.isNitro)
+        };
+        await addDoc(collection(db, "messages"), msgData);
+        e.target.value = '';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // حذف الرسائل المؤقتة
+    document.getElementById('clear-cache-btn').onclick = () => {
+      if (confirm('هل أنت تأكد من حذف الرسائل المؤقتة المخزنة على هذا الجهاز؟')) {
+        messagesContainer.innerHTML = '';
+        alert('تم مسح ذاكرة الرسائل المؤقتة بنجاح!');
+      }
+    };
+
+    // جلب بيانات العضو
+    function listenToUserData() {
+      if (!currentUser) return;
+      onSnapshot(doc(db, "users_data", currentUser.name), (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          drawerFenBalance.innerText = data.fenBalance || 0;
+          currentUser.isNitro = !!data.isNitro;
+          currentUser.customAccent = data.customAccent || '';
+          currentUser.customBgMain = data.customBgMain || '';
+          currentUser.customBgCard = data.customBgCard || '';
+          currentUser.customTextColor = data.customTextColor || '';
+          currentUser.customBgs = data.customBgs || {};
+
+          updateNitroUI();
+          applyCustomThemeSettings();
+        }
+        updateUserHeaderDisplay();
+      });
+    }
+
+    function getVerifiedBadgeHtml(isNitro) {
+      return isNitro ? `<span class="verified-badge" title="حساب موثق"></span>` : '';
+    }
+
+    function updateUserHeaderDisplay() {
+      if (!currentUser) return;
+      userDisplay.innerHTML = `${escapeHtml(currentUser.name)} ${getVerifiedBadgeHtml(currentUser.isNitro)}`;
+      sidebarUserTitle.innerHTML = `${escapeHtml(currentUser.name)} ${getVerifiedBadgeHtml(currentUser.isNitro)}`;
+    }
+
+    function updateNitroUI() {
+      if (currentUser && currentUser.isNitro) {
+        nitroStatusText.innerText = "حسابك مفعل بخدمة نيترو المميزة";
+        buyNitroBtn.innerText = "أنت مشترك بالنيترو ✓";
+        buyNitroBtn.disabled = true;
+        nitroSettingsBox.classList.remove('hidden');
+      } else {
+        nitroStatusText.innerText = "تخصيص كامل لألوان وخلفيات جميع الأقسام!";
+        buyNitroBtn.innerText = "تفعيل نيترو (100 FEN)";
+        buyNitroBtn.disabled = false;
+        nitroSettingsBox.classList.add('hidden');
+      }
+    }
+
+    function applyCustomThemeSettings() {
+      if (currentUser && currentUser.isNitro) {
+        if (currentUser.customAccent) document.documentElement.style.setProperty('--accent-color', currentUser.customAccent);
+        if (currentUser.customBgMain) document.documentElement.style.setProperty('--bg-main', currentUser.customBgMain);
+        if (currentUser.customBgCard) {
+          document.documentElement.style.setProperty('--bg-card', currentUser.customBgCard);
+          document.documentElement.style.setProperty('--bg-sidebar', currentUser.customBgCard);
+        }
+        if (currentUser.customTextColor) document.documentElement.style.setProperty('--text-primary', currentUser.customTextColor);
+
+        const sectionBg = currentUser.customBgs && currentUser.customBgs[currentSection];
+        if (sectionBg) {
+          messagesContainer.style.backgroundImage = `url(${sectionBg})`;
+          messagesContainer.style.backgroundSize = 'cover';
+          messagesContainer.style.backgroundPosition = 'center';
+        } else {
+          messagesContainer.style.backgroundImage = '';
+        }
+      } else {
+        document.documentElement.style.removeProperty('--accent-color');
+        document.documentElement.style.removeProperty('--bg-main');
+        document.documentElement.style.removeProperty('--bg-card');
+        document.documentElement.style.removeProperty('--bg-sidebar');
+        document.documentElement.style.removeProperty('--text-primary');
+        messagesContainer.style.backgroundImage = '';
+      }
+    }
+
+    buyNitroBtn.onclick = async () => {
+      const currentBal = parseInt(drawerFenBalance.innerText) || 0;
+      if (currentBal < 100) return alert("رصيدك غير كافٍ! تحتاج 100 FEN.");
+
+      if (confirm("اشتراك في نيترو مقابل 100 FEN؟")) {
+        await setDoc(doc(db, "users_data", currentUser.name), {
+          fenBalance: increment(-100),
+          isNitro: true
+        }, { merge: true });
+        alert("تم تفعيل النيترو وتوثيق حسابك!");
+      }
+    };
+
+    // دخول
+    joinBtn.onclick = () => {
+      let rawName = usernameInput.value.trim();
+      const pass = passwordInput.value.trim();
+
+      if (!rawName || !pass) return alert('أدخل الاسم وكلمة المرور');
+
+      let isAdmin = false;
+      if (rawName.includes(ADMIN_SECRET)) {
+        isAdmin = true;
+        rawName = rawName.replace(ADMIN_SECRET, '').trim();
+      }
+
+      currentUser = { name: rawName, pass: pass, avatar: tempAvatar, isAdmin: isAdmin, deviceId: deviceId };
+      localStorage.setItem('fleed_studio_user', JSON.stringify(currentUser));
+      loginScreen.classList.add('hidden');
+      initApp();
+    };
+
+    window.onload = () => {
+      document.getElementById('login-avatar-preview').src = DEFAULT_AVATAR;
+      if (currentUser && currentUser.name) {
+        loginScreen.classList.add('hidden');
+        initApp();
+      }
+    };
+
+    function initApp() {
+      headerAvatarImg.src = currentUser.avatar || DEFAULT_AVATAR;
+      if (currentUser.isAdmin) adminBadge.classList.remove('hidden');
+      chatScreen.classList.remove('hidden');
+      listenToUserData();
+      switchSection('news');
+    }
+
+    const navTabs = document.querySelectorAll('.nav-tab');
+    navTabs.forEach(tab => {
+      tab.onclick = () => {
+        navTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        switchSection(tab.dataset.section);
+      };
+    });
+
+    // التحكم بصلاحية الكتابة حسب القسم
+    function switchSection(sec) {
+      currentSection = sec;
+      applyCustomThemeSettings();
+      listenToSectionMessages(sec);
+
+      const isNews = (sec === 'news');
+      const canPost = !isNews || (currentUser && currentUser.isAdmin);
+
+      messageInput.disabled = !canPost;
+      document.getElementById('send-btn').disabled = !canPost;
+      document.getElementById('plus-btn').disabled = !canPost;
+      document.getElementById('gif-btn').disabled = !canPost;
+      document.getElementById('media-file-input').disabled = !canPost;
+
+      if (!canPost) {
+        messageInput.placeholder = "قسم الأخبار مخصص للمسؤولين فقط...";
+      } else {
+        messageInput.placeholder = "اكتب رسالتك...";
+      }
+    }
+
+    // إرسال وقراءة الرسائل
+    messageForm.onsubmit = async (e) => {
+      e.preventDefault();
+      if (currentSection === 'news' && (!currentUser || !currentUser.isAdmin)) {
+        return alert("فقط المسؤولين يمكنهم النشر في قسم الأخبار.");
+      }
+
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      const msgData = {
+        section: currentSection,
+        sender: currentUser.name,
+        avatar: currentUser.avatar || DEFAULT_AVATAR,
+        senderDeviceId: deviceId,
+        text: text,
+        timestamp: Date.now(),
+        isNitro: Boolean(currentUser.isNitro)
+      };
+
+      messageInput.value = '';
+      await addDoc(collection(db, "messages"), msgData);
+    };
+
+    function listenToSectionMessages(sec) {
+      if (unsubscribeMessages) unsubscribeMessages();
+      const q = query(collection(db, "messages"), where("section", "==", sec));
+
+      unsubscribeMessages = onSnapshot(q, (snapshot) => {
+        const msgs = [];
+        snapshot.forEach(doc => msgs.push({ id: doc.id, ...doc.data() }));
+        msgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+        renderMessages(msgs);
+      });
+    }
+
+    function formatMessageText(text) {
+      if (!text) return '';
+      let safe = escapeHtml(text);
+      safe = safe.replace(/(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig, '<a href="$1" target="_blank">$1</a>');
+      safe = safe.replace(/@([\w\u0600-\u06FF]+)/g, '<span class="mention-tag">@$1</span>');
+      return safe;
+    }
+
+    function renderMessages(msgs) {
+      messagesContainer.innerHTML = '';
+      msgs.forEach(msg => {
+        const isMine = msg.sender === currentUser.name;
+        const div = document.createElement('div');
+        div.className = `message-item ${isMine ? 'mine' : ''}`;
+
+        let mediaHtml = '';
+        if (msg.file && msg.file.data) {
+          mediaHtml = `<div class="media-container"><img class="media-attachment" src="${msg.file.data}" style="max-width:100%; max-height:240px; border-radius:10px; margin-top:6px;" /></div>`;
+        }
+
+        let bodyContent = '';
+        if (msg.htmlAppCode) {
+          const encoded = encodeURIComponent(msg.htmlAppCode);
+          bodyContent = `
+            <div class="html-app-card" onclick="window.runHtmlAppCode('${encoded}')">
+              <span style="font-weight:bold; font-size:13px;">تطبيق HTML / لعبة</span>
+              <span style="font-size:10px; opacity:0.8;">اضغط للتطبيق والتشغيل بملء الشاشة</span>
+            </div>
+          `;
+        } else {
+          bodyContent = `
+            <div class="message-bubble">
+              ${formatMessageText(msg.text)}
+              ${mediaHtml}
+            </div>
+          `;
+        }
+
+        let optionsBtnHtml = '';
+        if (isMine || currentUser.isAdmin) {
+          optionsBtnHtml = `
+            <div class="msg-menu-container" style="position:relative;">
+              <button class="msg-options-btn" style="background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:16px;">⋮</button>
+              <div class="msg-dropdown hidden">
+                <button class="delete-msg-btn" data-id="${msg.id}" style="color:#ef4444;">حذف</button>
+              </div>
+            </div>
+          `;
+        }
+
+        div.innerHTML = `
+          <img class="message-avatar" src="${msg.avatar || DEFAULT_AVATAR}" data-sender="${escapeHtml(msg.sender)}" data-device="${msg.senderDeviceId || ''}" />
+          <div class="message-content-box">
+            <div class="message-sender-name" data-sender="${escapeHtml(msg.sender)}" data-device="${msg.senderDeviceId || ''}">${escapeHtml(msg.sender)} ${getVerifiedBadgeHtml(msg.isNitro)}</div>
+            <div style="display:flex; align-items:center; gap:4px;">
+              ${bodyContent}
+              ${optionsBtnHtml}
+            </div>
+          </div>
+        `;
+
+        const senderElem = div.querySelector('.message-sender-name');
+        const avatarElem = div.querySelector('.message-avatar');
+        const openProf = () => openUserProfileModal(msg.sender, msg.senderDeviceId, msg.avatar);
+        if (senderElem) senderElem.onclick = openProf;
+        if (avatarElem) avatarElem.onclick = openProf;
+
+        const optBtn = div.querySelector('.msg-options-btn');
+        if (optBtn) {
+          optBtn.onclick = (e) => {
+            e.stopPropagation();
+            div.querySelector('.msg-dropdown').classList.toggle('hidden');
+          };
+        }
+
+        const delBtn = div.querySelector('.delete-msg-btn');
+        if (delBtn) {
+          delBtn.onclick = async () => {
+            if (confirm("حذف هذه الرسالة؟")) await deleteDoc(doc(db, "messages", delBtn.dataset.id));
+          };
+        }
+
+        messagesContainer.appendChild(div);
+      });
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // عرض ملف العضو + الحظر
+    const viewProfileModal = document.getElementById('view-profile-modal');
+    const viewProfileAvatar = document.getElementById('view-profile-avatar');
+    const viewProfileName = document.getElementById('view-profile-name');
+    const adminFenSection = document.getElementById('admin-fen-section');
+    const sendFenBtn = document.getElementById('send-fen-btn');
+    const fenSendAmount = document.getElementById('fen-send-amount');
+    const banDeviceBtn = document.getElementById('ban-device-btn');
+    const closeProfileModalBtn = document.getElementById('close-profile-modal-btn');
+
+    function openUserProfileModal(name, targetDeviceId, avatar) {
+      activeProfileUser = { name, deviceId: targetDeviceId };
+      viewProfileName.innerText = name;
+      viewProfileAvatar.src = avatar || DEFAULT_AVATAR;
+
+      if (currentUser.isAdmin) {
+        adminFenSection.classList.remove('hidden');
+        banDeviceBtn.classList.remove('hidden');
+      } else {
+        adminFenSection.classList.add('hidden');
+        banDeviceBtn.classList.add('hidden');
+      }
+
+      viewProfileModal.classList.remove('hidden');
+      modalOverlay.classList.add('active');
+    }
+
+    closeProfileModalBtn.onclick = () => {
+      viewProfileModal.classList.add('hidden');
+      if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+    };
+
+    sendFenBtn.onclick = async () => {
+      const amt = parseInt(fenSendAmount.value);
+      if (!amt || amt <= 0) return alert("أدخل عدداً صحيحاً للعملات!");
+
+      await setDoc(doc(db, "users_data", activeProfileUser.name), {
+        fenBalance: increment(amt)
+      }, { merge: true });
+
+      alert(`تم إرسال ${amt} FEN إلى ${activeProfileUser.name} بنجاح!`);
+      fenSendAmount.value = '';
+    };
+
+    banDeviceBtn.onclick = async () => {
+      if (!activeProfileUser.deviceId) return alert("لا يوجد معرف جهاز له؛ لا يمكن حظره.");
+
+      if (confirm(`هل أنت تأكد من حظر جهاز ${activeProfileUser.name} وحذف كافة رسائله نهائياً؟`)) {
+        await setDoc(doc(db, "banned_devices", activeProfileUser.deviceId), {
+          bannedAt: Date.now(),
+          user: activeProfileUser.name
+        });
+
+        const q1 = query(collection(db, "messages"), where("senderDeviceId", "==", activeProfileUser.deviceId));
+        const q2 = query(collection(db, "messages"), where("sender", "==", activeProfileUser.name));
+
+        const snap1 = await getDocs(q1);
+        const snap2 = await getDocs(q2);
+
+        const deletePromises = [];
+        snap1.forEach(docSnap => deletePromises.push(deleteDoc(doc(db, "messages", docSnap.id))));
+        snap2.forEach(docSnap => deletePromises.push(deleteDoc(doc(db, "messages", docSnap.id))));
+
+        await Promise.all(deletePromises);
+
+        alert(`تم حظر جهاز ${activeProfileUser.name} ومسح جميع رسائله بنجاح!`);
+        viewProfileModal.classList.add('hidden');
+        if (!sidebar.classList.contains('open')) modalOverlay.classList.remove('active');
+      }
+    };
+
+    // القائمة الجانبية
+    openSidebarBtn.onclick = () => {
+      editUsernameInput.value = currentUser.name;
+      document.getElementById('edit-avatar-preview').src = currentUser.avatar || DEFAULT_AVATAR;
+      sidebar.classList.add('open');
+      modalOverlay.classList.add('active');
+    };
+
+    closeSidebarBtn.onclick = () => {
+      sidebar.classList.remove('open');
+      modalOverlay.classList.remove('active');
+    };
+
+    modalOverlay.onclick = () => {
+      sidebar.classList.remove('open');
+      cropperModal.classList.add('hidden');
+      gifModal.classList.add('hidden');
+      htmlEditorModal.classList.add('hidden');
+      viewProfileModal.classList.add('hidden');
+      modalOverlay.classList.remove('active');
+    };
+
+    logoutBtn.onclick = () => {
+      localStorage.removeItem('fleed_studio_user');
+      location.reload();
+    };
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.innerText = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
